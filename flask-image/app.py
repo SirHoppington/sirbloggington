@@ -3,46 +3,33 @@ import sys
 from flask import Flask, request, jsonify, flash, render_template, url_for
 from flask_bootstrap import Bootstrap
 from flask_flatpages import FlatPages
-from flask_frozen import Freezer
+#db = SQLAlchemy()
 
 app = Flask(__name__)
-pages = FlatPages(app)
-freezer = Freezer(app)
 
-# this is a comment that has been edited!
+#POSTGRES = {
+#    'user':'dbuser',
+#    'pw':'H0pN3TS3cUR3P@SSW0rd',
+#    'db':'blogdb',
+#    'host':'localhost',
+#    'port':'5432',
+#}
+#app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+#app.config['DEBUG']
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://dbuser:H0pN3TS3cUR3P@SSW0rd@localhost/my_database'
 
-def my_renderer(text):
-    """Inject markdown renderering into jinja template"""
-    rendered_body = render_template_string(text)
-    pygmented_body = markdown.markdown(rendered_body, extensions=['codehilite', 'fenced_code'])
-    return pygmented_body
+#db.init_app(app)
 
-app.config.update({
-    'FLATPAGES_EXTENSION' : ['.md', '.markdown'],
-    'FLATPAGES_HTML_RENDER' : my_renderer
-})
+# Blueprints for auth routes
+from auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
 
-@freezer.register_generator
-def pagelist():
-  for page in pages:
-   yield url_for('page', path=page.path)
+# Blueprints for non-auth rotues
+from main import main as main_blueprint
+app.register_blueprint(main_blueprint)
 
-@app.route('/')
-def index():
-  articles = (p for p in pages if 'published' in p.meta)
-  latest = sorted(articles, reverse=True, key=lambda p: p.meta['published'])
-  return render_template('index.html', articles=latest[:10])
-
-@app.route('/<path:path>/')
-def page(path):
-  page = pages.get_or_404(path)
-  articles = (p for p in pages if 'published' in p.meta)
-  latest = sorted(articles, reverse=True, key=lambda p: p.meta['published'])
-  return render_template('page.html', page=page, articles=latest[:10])
+# this is a comment that has been edited thrice!
 
 if __name__=='__main__':
-    if len(sys.argv) > 1 and sys.argv[1] =='build':
-        freezer.freeze()
-    else:
         app.run(debug=True, host='0.0.0.0')
 
