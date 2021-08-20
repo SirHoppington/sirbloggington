@@ -1,0 +1,10 @@
+/Vagrant
+docker-compose.yml
+*.log
+Vagrantfile
+*.save
+Dockerfile
+.vagrant
+.idea
+blog
+postgres
