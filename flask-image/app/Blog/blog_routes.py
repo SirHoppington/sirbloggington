@@ -3,10 +3,10 @@ from flask import Blueprint, request, jsonify, make_response, render_template, r
 from flask_login import login_required, current_user
 from app import db
 from flask_jwt_extended import jwt_required
-from Blog.blog_model import Blog
-from Tag.tag_model import Tag
-from Tags_Blog.tag_blog_table import tag_blog
-from forms import AddBlog
+from app.Blog.blog_model import Blog
+from app.Tag.tag_model import Tag
+from app.Tags_Blog.tag_blog_table import tag_blog
+from app.forms import AddBlog
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import markdown
@@ -125,7 +125,7 @@ def test_blog():
     return render_template("test_blog.html",
                        form=form, blogs=latest[:10])
 
-@blogs.route('/','/blogs', methods=["GET"])
+@blogs.route('/blogs', methods=["GET"])
 def get_all_blogs():
     blogs = Blog.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)

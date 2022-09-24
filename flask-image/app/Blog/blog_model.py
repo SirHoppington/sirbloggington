@@ -1,6 +1,6 @@
 from app import db
 from datetime import datetime
-from Tags_Blog.tag_blog_table import tag_blog
+from app.Tags_Blog.tag_blog_table import tag_blog
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)

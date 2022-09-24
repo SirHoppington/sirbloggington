@@ -6,5 +6,6 @@ Vagrantfile
 Dockerfile
 .vagrant
 .idea
-blog
+/blog
 postgres
+config.py
