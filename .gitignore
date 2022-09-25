@@ -4,6 +4,7 @@ docker-compose.yml
 Vagrantfile
 *.save
 Dockerfile
+database.env
 .vagrant
 .idea
 /blog
@@ -200,4 +201,4 @@ fabric.properties
 *.jpg
 /flask-image/app/node_modules
 *.pyc
-/flask-image/app/database.env
+
