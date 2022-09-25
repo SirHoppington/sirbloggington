@@ -199,3 +199,4 @@ fabric.properties
 /flask-image/app/migrations/
 *.jpg
 /flask-image/app/node_modules
+*.pyc
