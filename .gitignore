@@ -202,4 +202,6 @@ fabric.properties
 /flask-image/app/node_modules
 *.pyc
 database.env
+/flask-image/migrations
+/flask-image/Login/__Pycache__
 
