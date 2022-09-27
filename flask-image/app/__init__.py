@@ -1,5 +1,5 @@
 import click
-from flask import Flask
+from flask import Flask, redirect, request
 from flask.cli import with_appcontext
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
