@@ -49,7 +49,7 @@ def create_blog():
             try:
                 file = request.files['file']
                 filename = secure_filename(file.filename)
-                file.save(os.path.join('static/imgs', filename))
+                file.save(os.path.join('app/static/imgs', filename))
                 tags = request.form.getlist('tags[]')
                 new_blog = Blog(title=form.title.data, content=form.contentcode.data, feature_image=filename)
                 db.session.add(new_blog)
@@ -125,18 +125,28 @@ def test_blog():
     return render_template("test_blog.html",
                        form=form, blogs=latest[:10])
 
+@blogs.route('/', methods=["GET"])
 @blogs.route('/blogs', methods=["GET"])
 def get_all_blogs():
     blogs = Blog.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
+    #tag_blogs = db.session.query(tag_blog).query.all()
+    tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id==Tag.id) & (tag_blog.c.blog_id==Blog.id)).all()
+        #tags.append(db.session.query(Tag).filter(Blog.id == x.id).first())
+    #for x in tags:
+    #    print (x[0].name)
+    #    print (x[1].title)
+    #print(tags)
+
+    print("test")
     if len(latest) == 0:
         return "No Blogs posted."
     elif len(latest) < 2:
-        return render_template('index.html', blogs=latest, homepage=latest, featured=latest[0])
+        return render_template('index.html', blogs=latest, tags=tags, homepage=latest, featured=latest[0])
     elif len(latest) < 4:
-        return render_template('index.html', blogs=latest, homepage=latest[0:2], featured=latest[0])
+        return render_template('index.html', blogs=latest, tags=tags, homepage=latest[0:2], featured=latest[0])
     else:
-        return render_template('index.html', blogs=latest[:4], homepage=latest[0:2], featured=latest[0])
+        return render_template('index.html', blogs=latest[:4], tags=tags[:4], homepage=latest[0:2], featured=latest[0])
 #    serialized_data = []
 #    for blog in blogs:
 #        serialized_data.append(blog.serialize)
