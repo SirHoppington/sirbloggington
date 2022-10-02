@@ -7,7 +7,7 @@
 	  <div class="col-lg-8">
 	    <h1 class="mt-4"> {{ blog.title }} </h1>
 		<hr>
-		<p>Last updated: {{ blog.created_at }}</p>
+		<p>Last updated: {{ blog.created_at.strftime('%d-%m-%Y') }}</p>
 		<hr>
           <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
           <hr>
@@ -15,18 +15,6 @@
 		 <hr>
 		</div>
 		<div class="col-md-4">
-		<!-- Search Widget -->
-        <div class="card my-4">
-          <h5 class="card-header">Search</h5>
-          <div class="card-body">
-            <div class="input-group">
-              <input type="text" class="form-control" placeholder="Search for...">
-              <span class="input-group-append">
-                <button class="btn btn-secondary" type="button">Go!</button>
-              </span>
-            </div>
-          </div>
-        </div>
         <!-- Categories Widget -->
         <div class="card my-4">
           <h5 class="card-header">Tags</h5>
@@ -56,9 +44,13 @@
 		<div class="card my-4">
           <h5 class="card-header">Related articles</h5>
           <div class="card-body">
-		  <li>
-		 Inserts relevent articles.
-		  </li>
+              {% for tag in query_blogs %}
+                  {% if not blog.title == tag.title %}
+                  <li>
+                  <a href={{ url_for('blogs.get_single_blog', id=tag.id) }}> {{ tag.title }} </a> {{ tag.created_at.strftime('%d-%m-%Y') }}
+                  </li>
+                  {% endif %}
+{% endfor %}
           </div>
         </div>
 	  </div>

@@ -51,7 +51,7 @@ def create_blog():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join('app/static/imgs', filename))
                 tags = request.form.getlist('tags[]')
-                new_blog = Blog(title=form.title.data, content=form.contentcode.data, feature_image=filename)
+                new_blog = Blog(title=form.title.data, content=form.contentcode.data, summary=form.summary.data, feature_image=filename)
                 db.session.add(new_blog)
                 for tag in tags:
                     tag_exists = db.session.query(Tag.name, Tag.id).filter(
@@ -164,14 +164,11 @@ def get_single_blog(id):
     tags = db.session.query(Tag.name).filter(Blog.id==id).all()
     #postTags = db.session.query(Tag.name).filter(Tag.id == tag_blog.tag_id).filter(tag_blog.blog_id == Blog.id).all()
     middle_index = len(query_tags)//2
-    return render_template('blog_post.html', blog=blog, blogs=latest[:4], html=html, query_tags=query_tags, first_half_tags=query_tags[:middle_index], second_half_tags=query_tags[middle_index:])
-   # serialized_blog = blog.serialize
-  #  serialized_blog["tags"] = []
 
-   # for tag in blog.tags:
-   #     serialized_blog["tags"].append(tag.serialize)
+    query_blogs = db.session.query(Blog).filter(
+        (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
 
-    #    return jsonify({"single_blog": serialized_blog})
+    return render_template('blog_post.html', blog=blog, blogs=latest[:4], html=html, query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index], second_half_tags=query_tags[middle_index:])
 
 @blogs.route('/blog/<tag>', methods=["GET"])
 def get_tags(tag):
@@ -179,7 +176,7 @@ def get_tags(tag):
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     tag = db.session.query(Tag.name, Tag.id).filter(
         Tag.name == tag).first()
-    query_blogs = db.session.query(Blog.title, Blog.created_at, Blog.id).filter(
+    query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == Blog.id) & (tag_blog.c.tag_id == Tag.id)).filter(Tag.name == tag.name).all()
     return render_template('tag_categories.html', tag=tag, blogs=latest[:4],query_blogs=query_blogs)
 

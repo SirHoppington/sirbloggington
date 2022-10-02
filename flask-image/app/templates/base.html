@@ -37,9 +37,6 @@
 		{% for blog in blogs %}
 		<a class="nav-link" href="{{ url_for('blogs.get_single_blog', id=blog.id)}}"> {{ blog.title }} </a>
 		 {% endfor %}
-         <div class="dropdown-divider"></div>
-         <a class="dropdown-item" href="delete">Delete Customer</a>
-        </div>
       </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
@@ -62,7 +59,7 @@
 {% block content %}{% endblock %}
   <footer class="py-5 bg-light">
     <div class="container">
-      <p class="m-0 text-center text-black-50">Copyright &copy; HopNets 2021</p>
+      <p class="m-0 text-center text-black-50">Copyright &copy; HopNets 2022</p>
     </div>
     <!-- /.container -->
   </footer>

@@ -11,6 +11,11 @@ class AddBlog(FlaskForm):
         [DataRequired()],
         id='title'
     )
+    summary = TextAreaField(
+        'Summary',
+        [DataRequired()],
+        id='summary'
+    )
     contentcode = TextAreaField(
         'Content',
         id='contentcode'

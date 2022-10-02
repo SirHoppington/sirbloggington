@@ -29,6 +29,7 @@
                 form_data.append("file", document.getElementById('image').files[0]);
 				form_data.append("contentcode", contentcode);
 				form_data.append("title", document.getElementById('title').value);
+                form_data.append("summary", document.getElementById('summary').value);
 
 				function onSuccess(responseText) {
 				    alert(responseText)
@@ -75,6 +76,11 @@
                     <fieldset class="form-field">
                         {{ form.feature_image.label}}
                         {{ form.feature_image }}
+                    </fieldset>
+                     <hr>
+                    <fieldset class="form-field">
+                        {{ form.summary.label}}
+                        {{ form.summary }}
                     </fieldset>
                 </form>
             </div>
