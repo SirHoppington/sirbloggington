@@ -132,7 +132,6 @@ def get_all_blogs():
     #for x in tags:
     #    print (x[0].name)
     #    print (x[1].title)
-    #print(tags)
 
     print("test")
     if len(latest) == 0:
