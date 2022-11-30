@@ -1,20 +1,29 @@
 {% extends 'base.html' %}
 {% block head %}
+    <style>
+    li {
+        list-style-type: none;
+    }
+    </style>
 {% endblock head %}
 {% block content %}
 <div class="container">
 	<div class="row">
 	  <div class="col-lg-8">
-	    <h1 class="mt-4"> {{ blog.title }} </h1>
-		<hr>
-		<p>Last updated: {{ blog.created_at.strftime('%d-%m-%Y') }}</p>
-		<hr>
-          <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
-          <hr>
-		 {{ html|safe }}
-		 <hr>
-		</div>
-		<div class="col-md-4">
+          <div class="card my-4 box-shadow h-md-250">
+              <h1 class="card-header"> {{ blog.title }} </h1>
+              <br>
+                  <p>Last updated: {{ blog.created_at.strftime('%d-%m-%Y') }}</p>
+              <br>
+                  <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
+              <br>
+                  <div class="card-body">
+                  {{ html|safe }}
+                  <hr>
+                  </div>
+          </div>
+      </div>
+          <div class="col-md-4">
         <!-- Categories Widget -->
         <div class="card my-4">
           <h5 class="card-header">Tags</h5>
@@ -45,11 +54,11 @@
           <h5 class="card-header">Related articles</h5>
           <div class="card-body">
               {% for tag in query_blogs %}
-                  {% if not blog.title == tag.title %}
-                  <li>
-                  <a href={{ url_for('blogs.get_single_blog', id=tag.id) }}> {{ tag.title }} </a> {{ tag.created_at.strftime('%d-%m-%Y') }}
-                  </li>
-                  {% endif %}
+                      {% if not blog.title == tag.title %}
+                          <li>
+                              <a href={{ url_for('blogs.get_single_blog', id=tag.id) }}> {{ tag.title }} </a> {{ tag.created_at.strftime('%d/%m/%Y') }}
+                          </li>
+                      {% endif %}
 {% endfor %}
           </div>
         </div>

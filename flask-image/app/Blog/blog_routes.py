@@ -118,52 +118,41 @@ def test_blog():
             resp = jsonify(errors)
             resp.status_code = 400
             return resp
-    return render_template("test_blog.html",
-                       form=form, blogs=latest[:10])
+    return render_template("test_blog.html", form=form, blogs=latest[:10])
+
 
 @blogs.route('/', methods=["GET"])
 @blogs.route('/blogs', methods=["GET"])
 def get_all_blogs():
     blogs = Blog.query.all()
+    all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    #tag_blogs = db.session.query(tag_blog).query.all()
-    tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id==Tag.id) & (tag_blog.c.blog_id==Blog.id)).all()
-        #tags.append(db.session.query(Tag).filter(Blog.id == x.id).first())
-    #for x in tags:
-    #    print (x[0].name)
-    #    print (x[1].title)
-
+    tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
     print("test")
     if len(latest) == 0:
         return "No Blogs posted."
-    elif len(latest) < 2:
-        return render_template('index.html', blogs=latest, tags=tags, homepage=latest, featured=latest[0])
-    elif len(latest) < 4:
-        return render_template('index.html', blogs=latest, tags=tags, homepage=latest[0:2], featured=latest[0])
     else:
-        return render_template('index.html', blogs=latest[:4], tags=tags, homepage=latest[0:2], featured=latest[0])
-#    serialized_data = []
-#    for blog in blogs:
-#        serialized_data.append(blog.serialize)
-
-#    return jsonify({"all_blogs": serialized_data})
+        return render_template('index.html', blogs=latest[1:],
+                               tags=tags, homepage=latest[0:4], featured=latest[0], topics=all_tags[0:20])
 
 @blogs.route('/blog/<int:id>', methods=["GET"])
 def get_single_blog(id):
     blogs = Blog.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    blog = db.session.query(Blog.title, Blog.content, Blog.feature_image, Blog.created_at,Tag.name).filter(Blog.id==id).first()
+    blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
+                            Blog.created_at, Tag.name).filter(Blog.id == id).first()
     html = my_renderer(blog.content)
-    query_tags = db.session.query(Tag.name).filter((tag_blog.c.blog_id==id) & (tag_blog.c.tag_id==Tag.id)).all()
-    #query_tags = Blog.query.join(tag_blog).join(Tag).filter((tag_blog.c.blog_id==id) & (tag_blog.c.tag_id==Tag.id)).all()
-    tags = db.session.query(Tag.name).filter(Blog.id==id).all()
-    #postTags = db.session.query(Tag.name).filter(Tag.id == tag_blog.tag_id).filter(tag_blog.blog_id == Blog.id).all()
+    query_tags = db.session.query(Tag.name).filter(
+        (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
+    tags = db.session.query(Tag.name).filter(Blog.id == id).all()
     middle_index = len(query_tags)//2
-
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
 
-    return render_template('blog_post.html', blog=blog, blogs=latest[:4], html=html, query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index], second_half_tags=query_tags[middle_index:])
+    return render_template('blog_post.html', blog=blog, blogs=latest[:4], html=html,
+                           query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
+                           second_half_tags=query_tags[middle_index:])
+
 
 @blogs.route('/blog/<tag>', methods=["GET"])
 def get_tags(tag):
