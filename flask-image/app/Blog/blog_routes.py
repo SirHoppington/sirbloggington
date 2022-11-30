@@ -54,23 +54,19 @@ def create_blog():
                 new_blog = Blog(title=form.title.data, content=form.contentcode.data, summary=form.summary.data, feature_image=filename)
                 db.session.add(new_blog)
                 for tag in tags:
-                    tag_exists = db.session.query(Tag.name, Tag.id).filter(
+                    tag_exists = db.session.query(Tag).filter(
                         Tag.name == tag).first()
                     if tag_exists:
                         new_blog.tags.append(tag_exists)
-                        db.session.commit()
                     else:
+                        # add a create tag function
                         new_tag = Tag(name=tag)
                         new_blog.tags.append(new_tag)
                         db.session.add(new_tag)
-                        db.session.commit()
                 db.session.commit()
                 id = db.session.query(Blog.id).filter(
                     Blog.title == form.title.data).first()
                 idInt = str(id).replace('(','').replace(',','').replace(')','')
-                #message = "Great success new post saved with ID: {}".format(id)
-                #resp = jsonify({'message': message})
-                #return resp
                 return "Great success new post saved with ID: {}".format(idInt)
             except Exception as e:
                 return(str(e))
@@ -146,7 +142,7 @@ def get_all_blogs():
     elif len(latest) < 4:
         return render_template('index.html', blogs=latest, tags=tags, homepage=latest[0:2], featured=latest[0])
     else:
-        return render_template('index.html', blogs=latest[:4], tags=tags[:4], homepage=latest[0:2], featured=latest[0])
+        return render_template('index.html', blogs=latest[:4], tags=tags, homepage=latest[0:2], featured=latest[0])
 #    serialized_data = []
 #    for blog in blogs:
 #        serialized_data.append(blog.serialize)
