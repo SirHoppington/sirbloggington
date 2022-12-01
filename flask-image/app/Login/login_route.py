@@ -52,3 +52,27 @@ def log_in():
         return redirect(url_for('blogs.create_blog'))
 
     return render_template('login.html')
+
+
+@login.route('/subscribe', methods=['POST'])
+def subscribe():
+
+    if request.method == 'POST':
+
+        name = request.form.get('name')
+        email = request.form.get('email')
+
+        subscriber = Subscriber.query.filter_by(email=email).first() # if this returns a email, then the email already exists in database
+
+        if subscriber: # if an email is found, we want advise email is already signed up
+            flash('Email address signed up.')
+            #return redirect(url_for('login.signup_post'))
+
+        # create a new user with the form data. Hash the password so the plaintext version isn't saved.
+        new_subscriber = Subscriber(name=name, email=email)
+
+        # add the new user to the database
+        db.session.add(new_subscriber)
+        db.session.commit()
+
+        return "Welcome {} thanks for subscribing!".format(name)
