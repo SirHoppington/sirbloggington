@@ -67,7 +67,7 @@ def subscribe():
 
         if subscriber: # if an email is found, we want advise email is already signed up
             flash('Email address signed up.')
-            #return redirect(url_for('login.signup_post'))
+            return redirect(url_for('blogs.blogs'))
 
         # create a new user with the form data. Hash the password so the plaintext version isn't saved.
         new_subscriber = Subscriber(name=name, email=email)
