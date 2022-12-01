@@ -42,7 +42,7 @@
             </ul>
       <button class="btn btn-outline-success my-2 my-sm-0" onclick="openSubscribe()">Subscribe</button>
             <div class="form-popup" id="myForm">
-                <form action= "{{ url_for('login.subscribe')}}" class="form-container">
+                <form action= "{{ url_for('login.subscribe')}}" method="post" class="form-container">
     <h1>Subscribe</h1>
 
                     <label for="name"><b>Name</b></label>
