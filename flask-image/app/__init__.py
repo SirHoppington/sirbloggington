@@ -13,6 +13,7 @@ from flask_mail import Mail
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+mail = Mail()
 
 def create_app(config_name=None):
     if config_name is None:
