@@ -71,10 +71,14 @@ def create_blog():
                 id = db.session.query(Blog.id).filter(
                     Blog.title == form.title.data).first()
                 idInt = str(id).replace('(', '').replace(',', '').replace(')', '')
-                for subscriber in subscribers:
-                    msg = Message ('New blog post from Hopnets!', recipients = subscriber)
-                    msg.body = "A new blog has been posted head over towww.hopnets.co.uk"
-                    mail.send(msg)
+                with mail.connect() as conn:
+                    for subscriber in subscribers:
+                        message = 'A new blog has been posted head over to www.hopnets.co.uk/{}'.format(idInt)
+                        subject = 'Hopnets Blog time!'
+                        msg = Message(recipients=[subscriber.email],
+                                      body=message,
+                                      subject=subject)
+                        conn.send(msg)
                 return "Great success new post saved with ID: {}".format(idInt)
             except Exception as e:
                 return(str(e))
