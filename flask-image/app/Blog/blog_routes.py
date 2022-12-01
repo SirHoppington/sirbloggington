@@ -132,12 +132,13 @@ def get_all_blogs():
     if len(latest) == 0:
         return "No Blogs posted."
     else:
-        return render_template('index.html', blogs=latest[1:],
+        return render_template('index.html', blogs=latest[:10],
                                tags=tags, homepage=latest[0:4], featured=latest[0], topics=all_tags[0:20])
 
 @blogs.route('/blog/<int:id>', methods=["GET"])
 def get_single_blog(id):
     blogs = Blog.query.all()
+    all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
                             Blog.created_at, Tag.name).filter(Blog.id == id).first()
@@ -149,25 +150,27 @@ def get_single_blog(id):
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
 
-    return render_template('blog_post.html', blog=blog, blogs=latest[:4], html=html,
+    return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
-                           second_half_tags=query_tags[middle_index:])
+                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20])
 
 
 @blogs.route('/blog/<tag>', methods=["GET"])
 def get_tags(tag):
     blogs = Blog.query.all()
+    all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     tag = db.session.query(Tag.name, Tag.id).filter(
         Tag.name == tag).first()
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == Blog.id) & (tag_blog.c.tag_id == Tag.id)).filter(Tag.name == tag.name).all()
-    return render_template('tag_categories.html', tag=tag, blogs=latest[:4],query_blogs=query_blogs)
+    return render_template('tag_categories.html', tag=tag, blogs=latest[:10],query_blogs=query_blogs, topics=all_tags[0:20])
 
 @blogs.route('/update_blog/<int:id>', methods=["POST", "GET"])
 @login_required
 def update_blog(id):
     blogs = Blog.query.all()
+    all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = Blog.query.filter_by(id=id).first()
     query_tags = db.session.query(Tag.name).filter(
@@ -215,7 +218,7 @@ def update_blog(id):
         #return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     elif request.method == "GET":
         form.title.data = blog.title
-        return render_template("update_blog.html", form=form, blogs=latest[:4], id=blog.id, blog=blog, query_tags=query_tags)
+        return render_template("update_blog.html", form=form, blogs=latest[:10], id=blog.id, blog=blog, query_tags=query_tags, topics=all_tags[0:20])
 
 @blogs.route('/delete_blog/<int:id>', methods=["DELETE"])
 @login_required

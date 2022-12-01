@@ -19,11 +19,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('blogs.get_all_blogs')}}">HopNets</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarColor01">
-            <ul class="navbar-nav me-auto">
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
                 {% for topic in topics %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}"> {{ topic.name }} </a>
@@ -40,6 +40,30 @@
                     </div>
                 </li>
             </ul>
+      <button class="btn btn-outline-success my-2 my-sm-0" onclick="openSubscribe()">Subscribe</button>
+            <div class="form-popup" id="myForm">
+                <form action= "{{ url_for('login.subscribe')}}" class="form-container">
+    <h1>Subscribe</h1>
+
+                    <label for="name"><b>Name</b></label>
+                    <input type="text" placeholder="Enter Name" name="name" required>
+
+                    <label for="email"><b>Email</b></label>
+                    <input type="text" placeholder="Enter Email" name="email" required>
+
+                    <button type="submit" class="btn">Subscribe</button>
+                    <button type="button" class="btn cancel" onclick="closeSubscribe()">Close</button>
+                </form>
+            </div>
+        <script>
+function openSubscribe() {
+  document.getElementById("myForm").style.display = "block";
+}
+
+function closeSubscribe() {
+  document.getElementById("myForm").style.display = "none";
+}
+</script>
         </div>
     </div>
 </nav>
