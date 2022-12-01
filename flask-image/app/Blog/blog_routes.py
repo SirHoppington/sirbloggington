@@ -35,6 +35,7 @@ def blog_added():
 @login_required
 def create_blog():
     blogs = Blog.query.all()
+    subscribers = Subscriber.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     form = AddBlog()
     #if form.validate_on_submit():
@@ -66,7 +67,11 @@ def create_blog():
                 db.session.commit()
                 id = db.session.query(Blog.id).filter(
                     Blog.title == form.title.data).first()
-                idInt = str(id).replace('(','').replace(',','').replace(')','')
+                idInt = str(id).replace('(', '').replace(',', '').replace(')', '')
+                for subscriber in subscribers:
+                    msg = Message ('New blog post from Hopnets!', recipients = subscriber)
+                    msg.body = "A new blog has been posted head over towww.hopnets.co.uk"
+                    mail.send(msg)
                 return "Great success new post saved with ID: {}".format(idInt)
             except Exception as e:
                 return(str(e))
