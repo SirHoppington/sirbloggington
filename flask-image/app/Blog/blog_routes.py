@@ -2,6 +2,7 @@ import os
 from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, url_for, redirect, json
 from flask_login import login_required, current_user
 from app import db
+from app import mail
 from flask_jwt_extended import jwt_required
 from app.Blog.blog_model import Blog
 from app.Tag.tag_model import Tag
