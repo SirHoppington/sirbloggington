@@ -25,7 +25,7 @@ def create_app(config_name=None):
     migrate.init_app(app,db)
     CORS(app)
     SimpleMDE(app)
-    mail = Mail(app)
+    mail.init_app(app)
     login_manager.login_view='login.log_in'
     login_manager.init_app(app)
 
