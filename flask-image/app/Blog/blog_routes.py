@@ -6,6 +6,7 @@ from flask_jwt_extended import jwt_required
 from app.Blog.blog_model import Blog
 from app.Tag.tag_model import Tag
 from app.Tags_Blog.tag_blog_table import tag_blog
+from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
 from werkzeug.utils import secure_filename
 from datetime import datetime
