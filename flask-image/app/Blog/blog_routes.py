@@ -10,6 +10,7 @@ from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from flask_mail import Message
 import markdown
 import gzip
 import subprocess
