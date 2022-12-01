@@ -73,7 +73,7 @@ def create_blog():
                 idInt = str(id).replace('(', '').replace(',', '').replace(')', '')
                 with mail.connect() as conn:
                     for subscriber in subscribers:
-                        message = 'A new blog has been posted head over to www.hopnets.co.uk/{}'.format(idInt)
+                        message = 'A new blog has been posted head over to www.hopnets.co.uk/blog/{}'.format(idInt)
                         subject = 'Hopnets Blog time!'
                         msg = Message(recipients=[subscriber.email],
                                       body=message,
