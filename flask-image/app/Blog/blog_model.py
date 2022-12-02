@@ -8,14 +8,16 @@ class Blog(db.Model):
     content = db.Column(db.Text, nullable=False)
     summary = db.Column(db.Text, nullable=False)
     feature_image = db.Column(db.String)
+    thumbnail = db.Column(db.String)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     tags = db.relationship('Tag', secondary=tag_blog, backref=db.backref('blogs_associated', lazy="dynamic"))
 
-    def __init__(self, title, content, summary, feature_image):
+    def __init__(self, title, content, summary, feature_image, thumbnail):
         self.title = title,
         self.content = content,
         self.summary = summary,
-        self.feature_image = feature_image
+        self.feature_image = feature_image,
+        self.thumbnail = thumbnail
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
@@ -29,5 +31,6 @@ class Blog(db.Model):
             'content' : self.content,
             'summary' : self.summary,
             'feature_image' : self.feature_image,
+            'thumbnail' : self.thumbnail,
             'created_at' : self.created_at,
         }

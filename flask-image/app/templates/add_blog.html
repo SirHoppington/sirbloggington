@@ -30,6 +30,7 @@
 				form_data.append("contentcode", contentcode);
 				form_data.append("title", document.getElementById('title').value);
                 form_data.append("summary", document.getElementById('summary').value);
+                form_data.append("thumbnail", document.getElementById('thumbnail').files[0]);
 
 				function onSuccess(responseText) {
 				    alert(responseText)
@@ -76,6 +77,11 @@
                     <fieldset class="form-field">
                         {{ form.feature_image.label}}
                         {{ form.feature_image }}
+                    </fieldset>
+                     <hr>
+                    <fieldset class="form-field">
+                        {{ form.thumbnail.label}}
+                        {{ form.thumbnail }}
                     </fieldset>
                      <hr>
                     <fieldset class="form-field">

@@ -39,6 +39,7 @@ def blog_added():
 def create_blog():
     blogs = Blog.query.all()
     subscribers = Subscriber.query.all()
+    all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     form = AddBlog()
     #if form.validate_on_submit():
@@ -51,11 +52,17 @@ def create_blog():
             # add a search to check if tag already exists.
         else:
             try:
+                #Add feature image:
                 file = request.files['file']
-                filename = secure_filename(file.filename)
-                file.save(os.path.join('app/static/imgs', filename))
+                filename1 = secure_filename(file.filename)
+                file.save(os.path.join('app/static/imgs', filename1))
+
+                #Add thumbnail:
+                thumbnail = request.files['thumbnail']
+                thumbnail_file = secure_filename(thumbnail.filename)
+                thumbnail.save(os.path.join('app/static/imgs', thumbnail_file))
                 tags = request.form.getlist('tags[]')
-                new_blog = Blog(title=form.title.data, content=form.contentcode.data, summary=form.summary.data, feature_image=filename)
+                new_blog = Blog(title=form.title.data, content=form.contentcode.data, summary=form.summary.data, feature_image=filename1, thumbnail=thumbnail_file)
                 db.session.add(new_blog)
                 for tag in tags:
                     tag_exists = db.session.query(Tag).filter(
@@ -87,7 +94,7 @@ def create_blog():
         taglist = [tag for tag in alltags['values']]
         #return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     return render_template("add_blog.html",
-                           form=form, blogs=latest[:4])
+                           form=form, blogs=latest[:4], topics=all_tags[0:20])
 
 #    blog_id = getattr(new_blog, "id")
 #    return jsonify({"id": blog_id})
@@ -145,7 +152,7 @@ def get_all_blogs():
         return "No Blogs posted."
     else:
         return render_template('index.html', blogs=latest[:10],
-                               tags=tags, homepage=latest[0:4], featured=latest[0], topics=all_tags[0:20])
+                               tags=tags, homepage=latest[1:4], featured=latest[0], topics=all_tags[0:20])
 
 @blogs.route('/blog/<int:id>', methods=["GET"])
 def get_single_blog(id):
@@ -176,7 +183,9 @@ def get_tags(tag):
         Tag.name == tag).first()
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == Blog.id) & (tag_blog.c.tag_id == Tag.id)).filter(Tag.name == tag.name).all()
-    return render_template('tag_categories.html', tag=tag, blogs=latest[:10],query_blogs=query_blogs, topics=all_tags[0:20])
+    latest_tag = sorted(query_blogs, reverse=True, key=lambda b: b.created_at)
+    tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
+    return render_template('tag_categories.html', tag=tag, tags=tags, blogs=latest[:10],query_blogs=latest_tag, topics=all_tags[0:20])
 
 @blogs.route('/update_blog/<int:id>', methods=["POST", "GET"])
 @login_required
