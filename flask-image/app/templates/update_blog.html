@@ -31,9 +31,15 @@
 				for (var x = 0; x < tags.length; x++) {
 					form_data.append("tags[]", tags[x]);
 				}
-                form_data.append("file", document.getElementById('image').files[0]);
+                if (document.getElementById('image').files[0] !== undefined ) {
+                    form_data.append("file", document.getElementById('image').files[0]);
+                }
+                if (document.getElementById('thumbnail').files[0] !== undefined ) {
+                    form_data.append("thumbnail", document.getElementById('thumbnail').files[0]);
+                }
 				form_data.append("contentcode", contentcode);
 				form_data.append("title", document.getElementById('title').value);
+                form_data.append("summary", document.getElementById('summary').value);
 
 				function onSuccess(responseText) {
 				    alert(responseText)
@@ -64,9 +70,9 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="form-wrapper">
-                <h1 class="mt-4">Add New Blog</h1>
+                <h1 class="mt-4">Update Blog</h1>
                 <hr>
-                <form method="POST" id="blogform" action="update_blog" enctype="multipart/form-data">
+                <form method="POST" id="blogform" enctype="multipart/form-data">
                     {{ form.csrf_token }}
                     <fieldset class="form-field">
                         {{ form.title.label}}
@@ -80,6 +86,16 @@
                     <fieldset class="form-field">
                         {{ form.feature_image.label}}
                         {{ form.feature_image }}
+                    </fieldset>
+                     <hr>
+                    <fieldset class="form-field">
+                        {{ form.thumbnail.label}}
+                        {{ form.thumbnail }}
+                    </fieldset>
+                     <hr>
+                    <fieldset class="form-field">
+                        {{ form.summary.label}}
+                        {{ form.summary }}
                     </fieldset>
                 </form>
             </div>

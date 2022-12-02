@@ -96,49 +96,6 @@ def create_blog():
     return render_template("add_blog.html",
                            form=form, blogs=latest[:4], topics=all_tags[0:20])
 
-#    blog_id = getattr(new_blog, "id")
-#    return jsonify({"id": blog_id})
-
-@blogs.route('/test_blog', methods=["POST", "GET"])
-def test_blog():
-    blogs = Blog.query.all()
-    latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    form = AddBlog()
-    # check if the post request has the file part
-    if request.method == "POST":
-        if 'files[]' not in request.files:
-            resp = jsonify({'message': 'No file part in the request'})
-            resp.status_code = 400
-            return resp
-
-        files = request.files.getlist('files[]')
-
-        errors = {}
-        success = False
-
-        for file in files:
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join('imgs', filename))
-                success = True
-            else:
-                errors[file.filename] = 'File type is not allowed'
-
-        if success and errors:
-            errors['message'] = 'File(s) successfully uploaded'
-            resp = jsonify(errors)
-            resp.status_code = 206
-            return resp
-        if success:
-            resp = jsonify({'message': 'Files successfully uploaded'})
-            resp.status_code = 201
-            return resp
-        else:
-            resp = jsonify(errors)
-            resp.status_code = 400
-            return resp
-    return render_template("test_blog.html", form=form, blogs=latest[:10])
-
 
 @blogs.route('/', methods=["GET"])
 @blogs.route('/blogs', methods=["GET"])
@@ -191,46 +148,76 @@ def get_tags(tag):
 @login_required
 def update_blog(id):
     blogs = Blog.query.all()
+    subscribers = Subscriber.query.all()
     all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = Blog.query.filter_by(id=id).first()
+    q_tags = db.session.query(Tag).filter(
+        (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
     query_tags = db.session.query(Tag.name).filter(
         (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
+    existing_tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
     form = AddBlog()
     #if form.validate_on_submit():
     if request.method == "POST":
             try:
-                if request.files['file']:
-                    file = request.files['file']
-                    filename = secure_filename(file.filename)
-                    file.save(os.path.join('static/imgs', filename))
-                    blog.feature_image = filename
-                tags = request.form.getlist('tags[]')
+                # create function
+                if request.files:
+                    print(request.files)
+                    for x in request.files:
+                        if x == 'file':
+                            file = request.files['file']
+                            filename = secure_filename(file.filename)
+                            file.save(os.path.join('app/static/imgs', filename))
+                            blog.feature_image = filename
+                        if x == 'thumbnail':
+                            #create function
+                            thumbnail = request.files['thumbnail']
+                            thumbnail_file = secure_filename(thumbnail.filename)
+                            thumbnail.save(os.path.join('app/static/imgs', thumbnail_file))
+                            blog.thumbnail = thumbnail_file
                 blog.title = form.title.data
                 blog.content = form.contentcode.data
-                blog.created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                for tag in tags:
-                    tag_exists = Tag.query.filter_by(name=tag).first()
-                    match = [x for x in query_tags if tag in x]
-                    if not tag_exists:
-                        new_tag = Tag(name=tag)
-                        db.session.add(new_tag)
-                        blog.tags.append(new_tag)
-                        db.session.commit()
+                blog.summary = form.summary.data
+                new_tags = request.form.getlist('tags[]')
+
+                for current_tag in q_tags:
+                    if current_tag not in new_tags:
+                        blog.tags.remove(current_tag)
+                    #for x in current_tag:
+                    #    column = Tag.query.filter_by(name=x).first()
+                    #    print(type(column))
+                    #    if x not in new_tags:
+                    #        blog.tags.remove(column)
+                # This section causes an issue if a tag that already exists is added it removes all tags
+                for tag in new_tags:
+                    tag_exists = db.session.query(Tag).filter(
+                        Tag.name == tag).first()
+                    tag_associated = db.session.query(Tag, Blog).filter(
+                        Tag.name == tag, Blog.id == id).first()
+                    if tag_exists:
+                        blog.tags.append(tag_exists)
                     else:
+                        new_tag = Tag(name=tag)
+                        print(new_tag)
+                        print("here")
+                        blog.tags.append(new_tag)
+                        db.session.add(new_tag)
+                db.session.commit()
+
+                    #tag_exists = Tag.query.filter_by(name=tag).first()
+                    #match = [x for x in query_tags if tag in x]
+                    #if not tag_exists:
+                    #    new_tag = Tag(name=tag)
+                    #    db.session.add(new_tag)
+                    #    blog.tags.append(new_tag)
+                    #    db.session.commit()
+                    #else:
                         #for query in query_tags:
                         #   if query.name == tag:
                         #        blog.tags.append(tag_exists)
                         #       db.session.commit()
-                        db.session.commit()
-                    db.session.commit()
-                #id = db.session.query(Blog.id).filter(
-                #    Blog.title == form.title.data).first()
-                #idInt = str(id).replace('(','').replace(',','').replace(')','')
-                #message = "Great success new post saved with ID: {}".format(id)
-                #resp = jsonify({'message': message})
-                #return resp
-                return "Great success new post updated with ID: {}".format(blog.id)
+                return "Great success post updated with ID: {}".format(blog.id)
             except Exception as e:
                 return(str(e))
     elif request.is_json:
@@ -239,6 +226,7 @@ def update_blog(id):
         #return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     elif request.method == "GET":
         form.title.data = blog.title
+        form.summary.data = blog.summary
         return render_template("update_blog.html", form=form, blogs=latest[:10], id=blog.id, blog=blog, query_tags=query_tags, topics=all_tags[0:20])
 
 @blogs.route('/delete_blog/<int:id>', methods=["DELETE"])
