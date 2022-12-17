@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, url_for, redirect, json, send_from_directory
+from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, url_for, redirect, json
 from flask_login import login_required, current_user
 from app import db
 from app import mail
@@ -97,9 +97,9 @@ def create_blog():
                            form=form, blogs=latest[:4], topics=all_tags[0:20])
 
 
-@blogs.route('/robots.txt')
-def static_from_root():
-    return send_from_directory(app.static_folder, request.path[1:])
+#@blogs.route('/robots.txt')
+#def static_from_root():
+#    return send_from_directory(app.static_folder, request.path[1:])
 
 
 @blogs.route('/sitemap.xml')
