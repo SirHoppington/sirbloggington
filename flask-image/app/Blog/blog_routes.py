@@ -98,9 +98,15 @@ def create_blog():
 
 
 @blogs.route('/robots.txt')
-@blogs.route('/sitemap.xml')
 def static_from_root():
     return send_from_directory(app.static_folder, request.path[1:])
+
+
+@blogs.route('/sitemap.xml')
+def static_from_root():
+    return app.send_static_file('sitemap.xml')
+    #return send_from_directory(app.static_folder, request.path[1:])
+
 
 @blogs.route('/', methods=["GET"])
 @blogs.route('/blogs', methods=["GET"])
