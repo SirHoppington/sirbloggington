@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /update_blog/
+Disallow: /add_blog.html
+Disallow: /sign_up.html
+Disallow: /login.html
+Sitemap: https://hopnets.com/sitemap.xml
