@@ -36,7 +36,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         {% for blog in blogs %}
-                            <a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', id=blog.id)}}"> {{ blog.title }} </a>
+                            <a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', title=blog.title)}}"> {{ blog.title }} </a>
                         {% endfor %}
                     </div>
                 </li>

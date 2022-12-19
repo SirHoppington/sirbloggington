@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, url_for, redirect, json
+from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, url_for, redirect, json, send_from_directory
 from flask_login import login_required, current_user
 from app import db
 from app import mail
@@ -104,8 +104,8 @@ def create_blog():
 
 @blogs.route('/sitemap.xml')
 def static_from_root():
-    return app.send_static_file('sitemap.xml')
-    #return send_from_directory(app.static_folder, request.path[1:])
+    #return send_static_file('sitemap.xml')
+    return url_for('static', filename='sitemap.xml')
 
 
 @blogs.route('/', methods=["GET"])
@@ -115,34 +115,33 @@ def get_all_blogs():
     all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
-    print("test")
     if len(latest) == 0:
         return "No Blogs posted."
     else:
         return render_template('index.html', blogs=latest[:10],
                                tags=tags, homepage=latest[1:4], featured=latest[0], topics=all_tags[0:20])
 
-@blogs.route('/blog/<int:id>', methods=["GET"])
-def get_single_blog(id):
+
+@blogs.route('/blog/<title>', methods=["GET"])
+def get_single_blog(title):
     blogs = Blog.query.all()
     all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
-                            Blog.created_at, Tag.name).filter(Blog.id == id).first()
+                            Blog.created_at, Tag.name).filter(Blog.title == title).first()
+    id = db.session.query(Blog).filter(Blog.title == title).first()
     html = my_renderer(blog.content)
     query_tags = db.session.query(Tag.name).filter(
-        (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
-    tags = db.session.query(Tag.name).filter(Blog.id == id).all()
+        (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
     middle_index = len(query_tags)//2
     query_blogs = db.session.query(Blog).filter(
-        (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
-
+        (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
     return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
                            second_half_tags=query_tags[middle_index:], topics=all_tags[0:20])
 
 
-@blogs.route('/blog/<tag>', methods=["GET"])
+@blogs.route('/<tag>', methods=["GET"])
 def get_tags(tag):
     blogs = Blog.query.all()
     all_tags = Tag.query.all()
@@ -154,6 +153,7 @@ def get_tags(tag):
     latest_tag = sorted(query_blogs, reverse=True, key=lambda b: b.created_at)
     tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
     return render_template('tag_categories.html', tag=tag, tags=tags, blogs=latest[:10],query_blogs=latest_tag, topics=all_tags[0:20])
+
 
 @blogs.route('/update_blog/<int:id>', methods=["POST", "GET"])
 @login_required

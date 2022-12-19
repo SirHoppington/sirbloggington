@@ -13,7 +13,7 @@
             <h1 class="display-4 font-italic">{{ featured.title }}</h1>
         <p class="lead my-3"> {{ featured.summary }}</p>
             <p class="lead mb-0">
-                <a href={{ url_for('blogs.get_single_blog', id=featured.id) }}> Continue reading..</a>
+                <a href={{ url_for('blogs.get_single_blog', title=featured.title) }}> Continue reading..</a>
             </p>
         </div>
     </div>
@@ -30,13 +30,13 @@
             {% endfor %}
              </strong>
     <h3 classs="mb-0">
-        <a class="text-dark" href={{ url_for('blogs.get_single_blog', id=blog.id) }}> {{ blog.title }}</a>
+        <a class="text-dark" href={{ url_for('blogs.get_single_blog', title=blog.title) }}> {{ blog.title }}</a>
     </h3>
         <div class="mb-1 text-muted"> Posted by Nick Hopgood on {{ blog.created_at.strftime('%d-%m-%Y') }} </div>
         <p class="card-text mb-auto">
             {{ blog.summary }}
         </p>
-        <a href={{ url_for('blogs.get_single_blog', id=blog.id) }}> Continue reading.. </a>
+        <a href={{ url_for('blogs.get_single_blog', title=blog.title) }}> Continue reading.. </a>
     </div>
     <img class=" card-img-right flex-auto d-none d-md-block" data-src="holder.js/200x250?theme=thumb" alt="Thumbnail [200x250}" style="width: 200px; height: 250px;" src="{{url_for('static', filename='imgs/'+blog.thumbnail) }}" data-holder-rendered="true">
     </div>

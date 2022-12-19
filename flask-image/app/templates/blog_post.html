@@ -56,7 +56,7 @@
               {% for tag in query_blogs %}
                       {% if not blog.title == tag.title %}
                           <li>
-                              <a href={{ url_for('blogs.get_single_blog', id=tag.id) }}> {{ tag.title }} </a> {{ tag.created_at.strftime('%d/%m/%Y') }}
+                              <a href={{ url_for('blogs.get_single_blog', title=tag.title) }}> {{ tag.title }} </a> {{ tag.created_at.strftime('%d/%m/%Y') }}
                           </li>
                       {% endif %}
 {% endfor %}
