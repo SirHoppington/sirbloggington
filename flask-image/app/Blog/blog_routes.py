@@ -9,6 +9,8 @@ from app.Tag.tag_model import Tag
 from app.Tags_Blog.tag_blog_table import tag_blog
 from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
+from app.queries import blogs_query, subscribers_query, all_tags_query, tags_query
+
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask_mail import Message
@@ -30,6 +32,7 @@ def my_renderer(text):
     pygmented_body = markdown.markdown(rendered_body, extensions=['codehilite', 'fenced_code'])
     return pygmented_body
 
+
 @blogs.route('/blog_added')
 def blog_added():
     return render_template("blog_added.html")
@@ -37,9 +40,9 @@ def blog_added():
 @blogs.route('/add_blog', methods=["POST", "GET"])
 @login_required
 def create_blog():
-    blogs = Blog.query.all()
-    subscribers = Subscriber.query.all()
-    all_tags = Tag.query.all()
+    blogs = blogs_query()
+    subscribers = subscribers_query()
+    all_tags = all_tags_query()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     form = AddBlog()
     #if form.validate_on_submit():
@@ -105,16 +108,17 @@ def create_blog():
 @blogs.route('/sitemap.xml')
 def static_from_root():
     #return send_static_file('sitemap.xml')
+    # Change to accept jinja variables
     return url_for('static', filename='sitemap.xml')
 
 
 @blogs.route('/', methods=["GET"])
 @blogs.route('/blogs', methods=["GET"])
 def get_all_blogs():
-    blogs = Blog.query.all()
-    all_tags = Tag.query.all()
+    blogs = blogs_query()
+    all_tags = all_tags_query()
+    tags = tags_query()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
     if len(latest) == 0:
         return "No Blogs posted."
     else:
@@ -124,8 +128,7 @@ def get_all_blogs():
 
 @blogs.route('/blog/<title>', methods=["GET"])
 def get_single_blog(title):
-    blogs = Blog.query.all()
-    all_tags = Tag.query.all()
+
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
                             Blog.created_at, Tag.name).filter(Blog.title == title).first()

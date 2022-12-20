@@ -5,7 +5,8 @@
 <lastmod>2022-12-16</lastmod>
 </url>
     <url>
-<loc>https://www.hopnets.com/blog/1</loc>
+<loc>{{ url_for('blogs.get_tags', tag=tag[0].name) }}
+    https://www.hopnets.com/blog/1</loc>
 <lastmod>2022-12-16</lastmod>
 </url>
 </urlset>
