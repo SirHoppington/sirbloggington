@@ -129,6 +129,10 @@ def get_all_blogs():
 @blogs.route('/blog/<title>', methods=["GET"])
 def get_single_blog(title):
 
+    blogs = blogs_query()
+
+    all_tags = all_tags_query()
+
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
                             Blog.created_at, Tag.name).filter(Blog.title == title).first()
