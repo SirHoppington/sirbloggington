@@ -1,4 +1,8 @@
-
+from app.Blog.blog_routes import Blog
+from app.Subscriber.subscriber_model import Subscriber
+from app.Tag.tag_model import Tag
+from app import db
+from app.Tags_Blog.tag_blog_table import tag_blog
 # Query all blog posts
 def blogs_query():
     result = Blog.query.all()

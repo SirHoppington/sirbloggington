@@ -129,10 +129,13 @@ def get_all_blogs():
 @blogs.route('/blog/<title>', methods=["GET"])
 def get_single_blog(title):
 
+    blogs = blogs_query()
+
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
                             Blog.created_at, Tag.name).filter(Blog.title == title).first()
     id = db.session.query(Blog).filter(Blog.title == title).first()
+    all_tags = Tag.query.all()
     html = my_renderer(blog.content)
     query_tags = db.session.query(Tag.name).filter(
         (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
@@ -149,7 +152,7 @@ def get_tags(tag):
     blogs = Blog.query.all()
     all_tags = Tag.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    tag = db.session.query(Tag.name, Tag.id).filter(
+    tag = db.session.query(Tag).filter(
         Tag.name == tag).first()
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == Blog.id) & (tag_blog.c.tag_id == Tag.id)).filter(Tag.name == tag.name).all()
