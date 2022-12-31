@@ -145,7 +145,7 @@ def get_single_blog(title):
         (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
     return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
-                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20])
+                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title)
 
 
 @blogs.route('/<tag>', methods=["GET"])
