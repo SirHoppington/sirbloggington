@@ -37,6 +37,7 @@ def my_renderer(text):
 def blog_added():
     return render_template("blog_added.html")
 
+
 @blogs.route('/add_blog', methods=["POST", "GET"])
 @login_required
 def create_blog():
