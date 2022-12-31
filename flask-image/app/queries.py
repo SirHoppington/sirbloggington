@@ -21,6 +21,7 @@ def all_tags_query():
     return result
 
 
+
 # Query all tags
 def tags_query():
     result = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
