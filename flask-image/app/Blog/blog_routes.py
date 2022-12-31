@@ -115,7 +115,6 @@ def static_from_root():
 
 
 @blogs.route('/', methods=["GET"])
-@blogs.route('/blogs', methods=["GET"])
 def get_all_blogs():
     blogs = blogs_query()
     all_tags = all_tags_query()
