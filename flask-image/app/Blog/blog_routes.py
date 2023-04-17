@@ -32,11 +32,9 @@ def my_renderer(text):
     pygmented_body = markdown.markdown(rendered_body, extensions=['codehilite', 'fenced_code'])
     return pygmented_body
 
-
 @blogs.route('/blog_added')
 def blog_added():
     return render_template("blog_added.html")
-
 
 
 @blogs.route('/add_blog', methods=["POST", "GET"])
@@ -261,6 +259,7 @@ def update_blog(id):
         form.title.data = blog.title
         form.summary.data = blog.summary
         return render_template("update_blog.html", form=form, blogs=latest[:10], id=blog.id, blog=blog, query_tags=query_tags, topics=all_tags[0:20])
+
 
 @blogs.route('/delete_blog/<int:id>', methods=["DELETE"])
 @login_required

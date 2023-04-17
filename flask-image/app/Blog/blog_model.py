@@ -32,5 +32,5 @@ class Blog(db.Model):
             'summary' : self.summary,
             'feature_image' : self.feature_image,
             'thumbnail' : self.thumbnail,
-            'created_at' : self.created_at,
+            'created_at' : self.created_at
         }

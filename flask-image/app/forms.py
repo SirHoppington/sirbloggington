@@ -22,3 +22,4 @@ class AddBlog(FlaskForm):
     )
     feature_image = FileField(validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')], id='image')
     thumbnail = FileField('Thumbnail (200x250)', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')], id='thumbnail')
+

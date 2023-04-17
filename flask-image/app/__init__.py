@@ -9,12 +9,10 @@ from werkzeug.security import generate_password_hash
 from flask_simplemde import SimpleMDE
 from flask_login import LoginManager
 from flask_mail import Mail
-
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
-
 def create_app(config_name=None):
     if config_name is None:
         app = Flask(__name__, instance_path='/usr/var/src/app')

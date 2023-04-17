@@ -107,6 +107,7 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+<<<<<<< HEAD
 .form-container {
   max-width: 300px;
   padding: 10px;
@@ -153,6 +154,8 @@ body {
   background-color: red;
 }
 
+=======
+>>>>>>> f1571d4e77023634046f0cbcf94342306cb05b7e
 hr {
   margin: 1rem 0;
   color: inherit;
@@ -664,11 +667,14 @@ progress {
   max-width: 100%;
   height: auto;
 }
+<<<<<<< HEAD
 .img-logo {
   background-color: #fff;
   max-width: 100%;
   max-height: 50px;
 }
+=======
+>>>>>>> f1571d4e77023634046f0cbcf94342306cb05b7e
 
 .figure {
   display: inline-block;
@@ -3874,7 +3880,10 @@ textarea.form-control-lg {
   flex-direction: column;
   padding-left: 0;
   margin-bottom: 0;
+<<<<<<< HEAD
   margin-left: 0.5rem;
+=======
+>>>>>>> f1571d4e77023634046f0cbcf94342306cb05b7e
   list-style: none;
 }
 .navbar-nav .show > .nav-link,
@@ -11063,3 +11072,4 @@ text-align: center
     font-size: 0.9em;
     line-height: 1.9em;
 }
+
