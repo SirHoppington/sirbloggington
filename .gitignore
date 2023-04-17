@@ -11,7 +11,8 @@ database.env
 postgres
 config.py
 /migrations
-
+.sh
+.sql
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template
 # Byte-compiled / optimized / DLL files
@@ -204,4 +205,10 @@ fabric.properties
 database.env
 /flask-image/migrations
 /flask-image/Login/__Pycache__
+/flask-image/backup.gz
+*.sh
+/flask-image/database
+/flask-image/database.pub
+/flask-image/postgres_key
+/flask-image/postgres_key.pub
 
