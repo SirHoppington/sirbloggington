@@ -10,7 +10,7 @@ from app.Tags_Blog.tag_blog_table import tag_blog
 from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
 from app.queries import blogs_query, subscribers_query, all_tags_query, tags_query
-
+from datetime import timedelta
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask_mail import Message
@@ -107,11 +107,26 @@ def create_blog():
 #    return send_from_directory(app.static_folder, request.path[1:])
 
 
-@blogs.route('/sitemap.xml')
-def static_from_root():
-    #return send_static_file('sitemap.xml')
-    # Change to accept jinja variables
-    return url_for('static', filename='sitemap.xml')
+@blogs.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+    try:
+      """Generate sitemap.xml. Makes a list of urls and date modified."""
+      pages=[]
+      ten_days_ago=(datetime.now() - timedelta(days=7)).date().isoformat()
+      # static pages
+      for rule in app.url_map.iter_rules():
+          if "GET" in rule.methods and len(rule.arguments)==0:
+              pages.append(
+                           ["https://hopnets.com"+str(rule.rule),ten_days_ago]
+                           )
+
+      sitemap_xml = render_template('sitemap.xml', pages=pages)
+      response= make_response(sitemap_xml)
+      response.headers["Content-Type"] = "application/xml"
+
+      return response
+    except Exception as e:
+        return(str(e))
 
 
 @blogs.route('/', methods=["GET"])
