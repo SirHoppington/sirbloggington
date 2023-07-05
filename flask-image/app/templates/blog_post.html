@@ -16,6 +16,17 @@
                   </div>
                   <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
               <br>
+                  {% if series %}
+                  <div class="card-header">
+                    <h2> {{series.name}} Series </h2>
+                    <ol>
+                      {% for post in blog_series %}
+                      <li> <a href={{ url_for('blogs.get_single_blog', title=post.title) }}> {{ loop.index}}. {{ post.title }}</a></li>
+                      {% endfor %}
+                    </ol>
+                  </div>
+                  <br>
+                  {% endif %}
                   <div class="card-body">
                   {{ html|safe }}
                   <hr>

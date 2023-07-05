@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
  <meta charset="UTF-8">
@@ -26,9 +27,9 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                {% for topic in topics %}
+                {% for topic in all_topics %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}"> {{ topic.name }} </a>
+                        <a class="nav-link" href="{{ url_for('blogs.get_topic', topic=topic.name) }}"> {{ topic.name }} </a>
                     </li>
                 {% endfor %}
                 <li class="nav-item dropdown">
@@ -48,10 +49,10 @@
     <h1>Subscribe</h1>
 
                     <label for="name"><b>Name</b></label>
-                    <input type="text" placeholder="Enter Name" name="name" required>
+                    <input type="text" placeholder="Enter Name" name="name" id="name" required>
 
                     <label for="email"><b>Email</b></label>
-                    <input type="text" placeholder="Enter Email" name="email" required>
+                    <input type="text" placeholder="Enter Email" name="email" id="email" required>
 
                     <button type="submit" class="btn">Subscribe</button>
                     <button type="button" class="btn cancel" onclick="closeSubscribe()">Close</button>

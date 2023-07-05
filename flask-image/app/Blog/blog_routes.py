@@ -1,12 +1,13 @@
 import os
-from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, url_for, redirect, json, send_from_directory
-from flask_login import login_required, current_user
+from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string
+from flask_login import login_required
 from app import db
 from app import mail
-from flask_jwt_extended import jwt_required
 from app.Blog.blog_model import Blog
 from app.Tag.tag_model import Tag
-from app.Tags_Blog.tag_blog_table import tag_blog
+from app.Topic.topic_model import Topic
+from app.Series.series_model import Series
+from app.Tags_Blog.tag_blog_table import tag_blog, topic_blog, series_blog
 from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
 from app.queries import blogs_query, subscribers_query, all_tags_query, tags_query
@@ -15,8 +16,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 from flask_mail import Message
 import markdown
-import gzip
-import subprocess
+from app.utilities.model_utilities import add_series
 
 
 blogs = Blueprint('blogs', __name__)
@@ -43,6 +43,7 @@ def create_blog():
     blogs = blogs_query()
     subscribers = subscribers_query()
     all_tags = all_tags_query()
+    all_topics = Topic.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     form = AddBlog()
     #if form.validate_on_submit():
@@ -77,6 +78,16 @@ def create_blog():
                         new_tag = Tag(name=tag)
                         new_blog.tags.append(new_tag)
                         db.session.add(new_tag)
+                if form.series.data != None:
+                    add_series(form.series.data, new_blog)
+                topic_exists = db.session.query(Topic).filter(
+                    Topic.name == form.topic.data).first()
+                if topic_exists:
+                    new_blog.topics.append(topic_exists)
+                else:
+                    new_topic = Topic(name=form.topic.data)
+                    new_blog.topics.append(new_topic)
+                    db.session.add(new_topic)
                 db.session.commit()
                 id = db.session.query(Blog.id).filter(
                     Blog.title == form.title.data).first()
@@ -97,7 +108,7 @@ def create_blog():
         taglist = [tag for tag in alltags['values']]
         #return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     return render_template("add_blog.html",
-                           form=form, blogs=latest[:4], topics=all_tags[0:20])
+                           form=form, blogs=latest[:4], all_topics=all_topics)
 
 
 #@blogs.route('/robots.txt')
@@ -131,24 +142,27 @@ def sitemap():
 def get_all_blogs():
     blogs = blogs_query()
     all_tags = all_tags_query()
+    all_topics = Topic.query.all()
     tags = tags_query()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     if len(latest) == 0:
         return "No Blogs posted."
     else:
         return render_template('index.html', blogs=latest[:10],
-                               tags=tags, homepage=latest[1:4], featured=latest[0], topics=all_tags[0:20])
+                               tags=tags, homepage=latest[1:4], featured=latest[0], all_topics=all_topics)
 
 
 @blogs.route('/blog/<title>', methods=["GET"])
 def get_single_blog(title):
 
     blogs = blogs_query()
+    all_topics = Topic.query.all()
 
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
                             Blog.created_at, Tag.name).filter(Blog.title == title).first()
     id = db.session.query(Blog).filter(Blog.title == title).first()
+    current_series= db.session.query(Series).filter((series_blog.c.blog_id == id.id) & (series_blog.c.series_id == Series.id)).first()
     all_tags = Tag.query.all()
     html = my_renderer(blog.content)
     query_tags = db.session.query(Tag.name).filter(
@@ -156,15 +170,43 @@ def get_single_blog(title):
     middle_index = len(query_tags)//2
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
+    print(id.id)
+    if current_series:
+        current_series_id = current_series.id
+    else:
+        current_series_id = None
+    print("HEEERE")
+    print(current_series)
+    print("HERE")
+    query_series = db.session.query(Blog).filter(
+        (series_blog.c.series_id==current_series_id) & (series_blog.c.blog_id == Blog.id)).all()
+    print(query_series)
     return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
-                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title)
+                           second_half_tags=query_tags[middle_index:], all_topics=all_topics, title=title, blog_series=query_series, series=current_series)
+
+
+@blogs.route('/topic/<topic>', methods=["GET"])
+def get_topic(topic):
+    blogs = Blog.query.all()
+    all_topics = Topic.query.all()
+    latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
+    topic = db.session.query(Topic).filter(
+        Topic.name == topic).first()
+    query_blogs = db.session.query(Blog).filter(
+        (topic_blog.c.blog_id == Blog.id) & (topic_blog.c.topic_id == Topic.id)).filter(Topic.name == topic.name).all()
+    #query_blogs = topic_filter(topic)
+    latest_topic = sorted(query_blogs, reverse=True, key=lambda b: b.created_at)
+    tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
+    return render_template('topic_posts.html', topic=topic, tags=tags, blogs=latest[:10],query_blogs=latest_topic, all_topics=all_topics)
+
 
 
 @blogs.route('/<tag>', methods=["GET"])
 def get_tags(tag):
     blogs = Blog.query.all()
     all_tags = Tag.query.all()
+    all_topics = Topic.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
     tag = db.session.query(Tag).filter(
         Tag.name == tag).first()
@@ -172,26 +214,35 @@ def get_tags(tag):
         (tag_blog.c.blog_id == Blog.id) & (tag_blog.c.tag_id == Tag.id)).filter(Tag.name == tag.name).all()
     latest_tag = sorted(query_blogs, reverse=True, key=lambda b: b.created_at)
     tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
-    return render_template('tag_categories.html', tag=tag, tags=tags, blogs=latest[:10],query_blogs=latest_tag, topics=all_tags[0:20])
+    return render_template('tag_categories.html', tag=tag, tags=tags, blogs=latest[:10],query_blogs=latest_tag, all_topics=all_topics, topics=all_tags[0:20])
 
 
-@blogs.route('/update_blog/<int:id>', methods=["POST", "GET"])
+#@blogs.route('/update_blog/<int:id>', methods=["POST", "GET"])
+@blogs.route('/update_blog/<title>', methods=["POST", "GET"])
 @login_required
-def update_blog(id):
+def update_blog(title):
     blogs = Blog.query.all()
     subscribers = Subscriber.query.all()
     all_tags = Tag.query.all()
+    all_topics = Topic.query.all()
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    blog = Blog.query.filter_by(id=id).first()
+    blog = Blog.query.filter_by(title=title).first()
+    current_series = db.session.query(Series.name).filter(
+        (series_blog.c.blog_id == blog.id) & (series_blog.c.series_id == Series.id)).first()
+    
+    topic = db.session.query(Topic.name).filter(
+        (topic_blog.c.blog_id == blog.id) & (topic_blog.c.topic_id == Topic.id)).first()
+
     q_tags = db.session.query(Tag).filter(
-        (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
+        (tag_blog.c.blog_id == blog.id) & (tag_blog.c.tag_id == Tag.id)).all()
     query_tags = db.session.query(Tag.name).filter(
-        (tag_blog.c.blog_id == id) & (tag_blog.c.tag_id == Tag.id)).all()
+        (tag_blog.c.blog_id == blog.id) & (tag_blog.c.tag_id == Tag.id)).all()
     existing_tags = db.session.query(Tag, Blog).filter((tag_blog.c.tag_id == Tag.id) & (tag_blog.c.blog_id == Blog.id)).all()
     form = AddBlog()
     #if form.validate_on_submit():
     if request.method == "POST":
             try:
+                print (blog.thumbnail)
                 # create function
                 if request.files:
                     print(request.files)
@@ -207,9 +258,12 @@ def update_blog(id):
                             thumbnail_file = secure_filename(thumbnail.filename)
                             thumbnail.save(os.path.join('app/static/imgs', thumbnail_file))
                             blog.thumbnail = thumbnail_file
-                blog.title = form.title.data
-                blog.content = form.contentcode.data
-                blog.summary = form.summary.data
+                if blog.title != form.title.data:
+                    blog.title = form.title.data
+                if blog.content != form.contentcode.data:
+                    blog.content = form.contentcode.data
+                if blog.summary != form.summary.data:
+                    blog.summary = form.summary.data
                 new_tags = request.form.getlist('tags[]')
 
                 for current_tag in q_tags:
@@ -225,7 +279,7 @@ def update_blog(id):
                     tag_exists = db.session.query(Tag).filter(
                         Tag.name == tag).first()
                     tag_associated = db.session.query(Tag, Blog).filter(
-                        Tag.name == tag, Blog.id == id).first()
+                        Tag.name == tag, Blog.id == blog.id).first()
                     if tag_exists:
                         blog.tags.append(tag_exists)
                     else:
@@ -234,6 +288,25 @@ def update_blog(id):
                         print("here")
                         blog.tags.append(new_tag)
                         db.session.add(new_tag)
+                if form.series.data != current_series.name:
+                    if form.series.data != None:
+                        series_exists = db.session.query(Series).filter(
+                            Series.name == form.series.data).first()
+                        if series_exists:
+                            blog.series.append(series_exists)
+                        else:
+                            new_series = Series(name=form.series.data)
+                            blog.series.append(new_series)
+                            db.session.add(new_series)
+                if form.topic.data != topic.name:
+                    topic_exists = db.session.query(Topic).filter(
+                        Topic.name == form.topic.data).first()
+                    if topic_exists:
+                        blog.topics.append(topic_exists)
+                    else:
+                        new_topic = Topic(name=form.topic.data)
+                        blog.topics.append(new_topic)
+                        db.session.add(new_topic)
                 db.session.commit()
 
                     #tag_exists = Tag.query.filter_by(name=tag).first()
@@ -258,7 +331,11 @@ def update_blog(id):
     elif request.method == "GET":
         form.title.data = blog.title
         form.summary.data = blog.summary
-        return render_template("update_blog.html", form=form, blogs=latest[:10], id=blog.id, blog=blog, query_tags=query_tags, topics=all_tags[0:20])
+        if current_series:
+            form.series.data = current_series.name
+        if topic:
+            form.topic.data = topic.name
+        return render_template("update_blog.html", form=form, blogs=latest[:10], id=blog.id, blog=blog, query_tags=query_tags, all_topics=all_topics)
 
 
 @blogs.route('/delete_blog/<int:id>', methods=["DELETE"])

@@ -16,10 +16,22 @@ class AddBlog(FlaskForm):
         [DataRequired()],
         id='summary'
     )
+
+    series = TextAreaField(
+        'Series',
+        id='series'
+    )
+
+    topic = StringField(
+        'topic',
+        id='topic'
+    )
+
     contentcode = TextAreaField(
         'Content',
         id='contentcode'
     )
+    
     feature_image = FileField(validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')], id='image')
     thumbnail = FileField('Thumbnail (200x250)', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')], id='thumbnail')
 

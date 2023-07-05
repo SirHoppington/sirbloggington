@@ -30,6 +30,8 @@
 				form_data.append("contentcode", contentcode);
 				form_data.append("title", document.getElementById('title').value);
                 form_data.append("summary", document.getElementById('summary').value);
+                form_data.append("topic", document.getElementById('topic').value);
+                form_data.append("series", document.getElementById('series').value);
                 form_data.append("thumbnail", document.getElementById('thumbnail').files[0]);
 
 				function onSuccess(responseText) {
@@ -71,6 +73,11 @@
                     </fieldset>
                     <hr>
                     <fieldset class="form-field">
+                        {{ form.topic.label}}
+                        {{ form.topic(size=20) }}
+                    </fieldset>
+                    <hr>
+                    <fieldset class="form-field">
                         <div id="example2"></div>
                     </fieldset>
                     <hr>
@@ -87,6 +94,11 @@
                     <fieldset class="form-field">
                         {{ form.summary.label}}
                         {{ form.summary }}
+                    </fieldset>
+                    <hr>
+                    <fieldset class="form-field">
+                        {{ form.series.label}}
+                        {{ form.series }}
                     </fieldset>
                 </form>
             </div>
