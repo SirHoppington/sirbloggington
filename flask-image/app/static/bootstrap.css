@@ -107,7 +107,6 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-<<<<<<< HEAD
 .form-container {
   max-width: 300px;
   padding: 10px;
@@ -128,6 +127,7 @@ body {
   right: 0;
   border: 3px solid #f1f1f1;
   z-index: 9;
+  background: #ECF0F1;
 }
 
 /* Full-width input fields */
@@ -154,8 +154,6 @@ body {
   background-color: red;
 }
 
-=======
->>>>>>> f1571d4e77023634046f0cbcf94342306cb05b7e
 hr {
   margin: 1rem 0;
   color: inherit;
@@ -667,14 +665,11 @@ progress {
   max-width: 100%;
   height: auto;
 }
-<<<<<<< HEAD
 .img-logo {
   background-color: #fff;
   max-width: 100%;
   max-height: 50px;
 }
-=======
->>>>>>> f1571d4e77023634046f0cbcf94342306cb05b7e
 
 .figure {
   display: inline-block;
