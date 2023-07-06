@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string
+from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, current_app
 from flask_login import login_required
 from app import db
 from app import mail
@@ -123,7 +123,7 @@ def sitemap():
       pages=[]
       ten_days_ago=(datetime.now() - timedelta(days=7)).date().isoformat()
       # static pages
-      for rule in app.url_map.iter_rules():
+      for rule in current_app.url_map.iter_rules():
           if "GET" in rule.methods and len(rule.arguments)==0:
               pages.append(
                            ["https://hopnets.com"+str(rule.rule),ten_days_ago]
