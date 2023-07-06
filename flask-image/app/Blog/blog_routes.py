@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, current_app
+from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, current_app, send_from_directory
 from flask_login import login_required
 from app import db
 from app import mail
@@ -111,9 +111,9 @@ def create_blog():
                            form=form, blogs=latest[:4], all_topics=all_topics)
 
 
-#@blogs.route('/robots.txt')
-#def static_from_root():
-#    return send_from_directory(app.static_folder, request.path[1:])
+@blogs.route('/robots.txt')
+def static_from_root():
+    return send_from_directory(current_app.static_folder, request.path[1:])
 
 
 @blogs.route('/sitemap.xml', methods=['GET'])
