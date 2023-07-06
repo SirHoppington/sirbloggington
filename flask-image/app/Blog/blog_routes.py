@@ -10,7 +10,7 @@ from app.Series.series_model import Series
 from app.Tags_Blog.tag_blog_table import tag_blog, topic_blog, series_blog
 from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
-from app.queries import blogs_query, subscribers_query, all_tags_query, tags_query
+from app.queries import blogs_query, subscribers_query, all_tags_query, tags_query, get_existing_topic
 from datetime import timedelta
 from werkzeug.utils import secure_filename
 from datetime import datetime
@@ -149,7 +149,7 @@ def get_all_blogs():
         return "No Blogs posted."
     else:
         return render_template('index.html', blogs=latest[:10],
-                               tags=tags, homepage=latest[1:4], featured=latest[0], all_topics=all_topics)
+                               tags=tags, homepage=latest[1:9], featured=latest[0], all_topics=all_topics)
 
 
 @blogs.route('/blog/<title>', methods=["GET"])
@@ -168,22 +168,18 @@ def get_single_blog(title):
     query_tags = db.session.query(Tag.name).filter(
         (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
     middle_index = len(query_tags)//2
-    query_blogs = db.session.query(Blog).filter(
-        (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
-    print(id.id)
     if current_series:
         current_series_id = current_series.id
     else:
         current_series_id = None
-    print("HEEERE")
-    print(current_series)
-    print("HERE")
+    current_topic = db.session.query(Topic).filter((topic_blog.c.blog_id == id.id) & (topic_blog.c.topic_id == Topic.id)).first()
     query_series = db.session.query(Blog).filter(
         (series_blog.c.series_id==current_series_id) & (series_blog.c.blog_id == Blog.id)).all()
-    print(query_series)
+    related_topic = db.session.query(Blog).filter(
+        (topic_blog.c.blog_id == Blog.id) & (topic_blog.c.topic_id == current_topic.id)).all()
     return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
-                           query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
-                           second_half_tags=query_tags[middle_index:], all_topics=all_topics, title=title, blog_series=query_series, series=current_series)
+                           query_tags=query_tags, first_half_tags=query_tags[:middle_index],
+                           second_half_tags=query_tags[middle_index:], all_topics=all_topics, title=title, blog_series=query_series, series=current_series, related_topic=related_topic)
 
 
 @blogs.route('/topic/<topic>', methods=["GET"])
@@ -288,8 +284,8 @@ def update_blog(title):
                         print("here")
                         blog.tags.append(new_tag)
                         db.session.add(new_tag)
-                if form.series.data != current_series.name:
-                    if form.series.data != None:
+                if current_series:
+                    if form.series.data != current_series.name:
                         series_exists = db.session.query(Series).filter(
                             Series.name == form.series.data).first()
                         if series_exists:
@@ -298,11 +294,14 @@ def update_blog(title):
                             new_series = Series(name=form.series.data)
                             blog.series.append(new_series)
                             db.session.add(new_series)
-                if form.topic.data != topic.name:
-                    topic_exists = db.session.query(Topic).filter(
-                        Topic.name == form.topic.data).first()
-                    if topic_exists:
-                        blog.topics.append(topic_exists)
+                topic_object = get_existing_topic(form.topic.data)
+                print(type(topic_object))
+                if topic:
+                    if form.topic.data != topic.name:
+                        blog.topics.append(topic_object)
+                else:
+                    if topic_object:
+                        blog.topics.append(topic_object)
                     else:
                         new_topic = Topic(name=form.topic.data)
                         blog.topics.append(new_topic)

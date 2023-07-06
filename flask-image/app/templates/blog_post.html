@@ -63,7 +63,7 @@
 		<div class="card my-4">
           <h5 class="card-header">Related articles</h5>
           <div class="card-body">
-              {% for tag in query_blogs %}
+              {% for tag in related_topic %}
                       {% if not blog.title == tag.title %}
                           <li>
                               <a href={{ url_for('blogs.get_single_blog', title=tag.title) }}> {{ tag.title }} </a> {{ tag.created_at.strftime('%d/%m/%Y') }}
