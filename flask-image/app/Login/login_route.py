@@ -75,5 +75,5 @@ def subscribe():
         # add the new user to the database
         db.session.add(new_subscriber)
         db.session.commit()
-
-        return "Welcome {} thanks for subscribing!".format(name)
+        flash(f'Welcome {name} thanks for subscribing!')
+        return redirect(request.referrer)

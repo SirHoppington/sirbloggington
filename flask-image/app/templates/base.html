@@ -2,26 +2,34 @@
 <html>
 <head>
  <meta charset="UTF-8">
+  <meta name="google-site-verification" content="-_LyGNxlKjeAI3-iZlr7G4XotGwblRre2VOjmtrlgPo" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='imgs/favicon.png')}}">
   {% if title %}
-  <title>{{ title }} - HopNets</title>
+  <title>{{ title }} - SirHoppington</title>
     <meta name="description" content= "{{ title }}">
   {% else %}
-  <title>HopNets</title>
+  <title>SirHoppington</title>
   {% endif %}
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
- <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='main.css')}}">
 <script src="https://code.jquery.com/jquery-3.6.0.js"
   integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
   crossorigin="anonymous"> </script>
+  <style>
+    .img-logo {
+    background-color: #fff;
+    max-width: 100%;
+    max-height: 50px;
+  }
+  </style>
 {% block head %}{% endblock %}
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="""nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img class="img-logo" src="{{url_for('static', filename='imgs/new-logo-small.png')}}" alt="HopNets code logo"> </a>
+        <a class="""nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img class="img-logo" src="{{url_for('static', filename='imgs/sirhopy-1.png')}}" alt="SirHoppington code logo" width=auto height=auto> </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -36,54 +44,53 @@
                     <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         All Posts
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <div class="dropdown-menu navbar-custom-hover" aria-labelledby="navbarDropdown">
                         {% for blog in blogs %}
                             <a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', title=blog.title)}}"> {{ blog.title }} </a>
                         {% endfor %}
                     </div>
                 </li>
             </ul>
-      <button class="btn btn-outline-success my-2 my-sm-0" onclick="openSubscribe()">Subscribe</button>
-            <div class="form-popup" id="myForm">
-                <form action= "{{ url_for('login.subscribe')}}" method="post" class="form-container">
+      <button class="btn btn-outline-light" data-toggle="modal" data-target="#subModal">Subscribe</button>
+      <div class="modal fade" id="subModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
     <h1>Subscribe</h1>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form action= "{{ url_for('login.subscribe')}}" method="post" class="form-group">
 
-                    <label for="name"><b>Name</b></label>
-                    <input type="text" placeholder="Enter Name" name="name" id="name" required>
-
-                    <label for="email"><b>Email</b></label>
-                    <input type="text" placeholder="Enter Email" name="email" id="email" required>
-
-                    <button type="submit" class="btn">Subscribe</button>
-                    <button type="button" class="btn cancel" onclick="closeSubscribe()">Close</button>
-                </form>
-            </div>
-        <script>
-function openSubscribe() {
-  document.getElementById("myForm").style.display = "block";
-}
-
-function closeSubscribe() {
-  document.getElementById("myForm").style.display = "none";
-}
-</script>
-        </div>
-    </div>
+      <label for="name" class="col-form-label"><b>Name</b></label>
+      <input type="text" class="form-control" placeholder="Enter Name" name="name" id="name" required>
+    
+      <label for="email" class="col-form-label"><b>Email</b></label>
+      <input type="text" class="form-control" placeholder="Enter Email" name="email" id="email" required>
+  </div>
+  <div class="modal-footer">
+  <button type="submit" class="btn btn-primary"> Subscribe </button>
+  </form>
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+  </div>
+</div>
+</div>
+</div>
 </nav>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+<div class="container">
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-warning">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      {{ message }}
+  </div>
+  {% endfor %}
 <body>
 {% block content %}{% endblock %}
   <footer class="py-5 bg-light">
     <div class="container">
-      <p class="m-0 text-center text-black-50">Copyright &copy; HopNets 2023</p>
+      <p class="m-0 text-center text-black-50">Copyright &copy; SirHoppington 2023</p>
         {% block foot %}{% endblock %}
     </div>
     <!-- /.container -->
