@@ -1,3 +1,5 @@
+*assets
+*.scss
 /Vagrant
 docker-compose.yml
 *.log
@@ -212,3 +214,8 @@ database.env
 /flask-image/postgres_key
 /flask-image/postgres_key.pub
 
+flask-image/package-lock.json
+flask-image/package.json
+flask-image/app/static/main.scss
+flask-image/app/static/main.scss
+flask-image/app/static/main.scss
