@@ -4,7 +4,7 @@ from app.Tags_Blog.tag_blog_table import tag_blog, topic_blog, series_blog
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
     summary = db.Column(db.Text, nullable=False)
     feature_image = db.Column(db.String)
