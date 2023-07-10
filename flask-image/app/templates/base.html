@@ -18,10 +18,16 @@
   crossorigin="anonymous"> </script>
   <style>
     .right {
-  position: absolute;
-  right: 0;
-  padding-right: 10px;
-}
+      position: absolute;
+      padding-right: 10px;
+    }
+
+    @media (min-width: 992px) {
+      .right {
+        right: 0;
+      }
+    }
+
   </style>
 {% block head %}{% endblock %}
 </head>
