@@ -17,16 +17,19 @@
   integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
   crossorigin="anonymous"> </script>
   <style>
-    .right {
-      position: absolute;
+        .right {
+      position: fixed;
       padding-right: 10px;
-    }
+      right: 0;
 
-    @media (min-width: 992px) {
-      .right {
-        right: 0;
-      }
     }
+    @media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+    .right {
+      position: relative;
+
+  }
+}
 
   </style>
 {% block head %}{% endblock %}
