@@ -18,7 +18,6 @@ from flask_mail import Message
 import markdown
 from app.utilities.model_utilities import add_series
 
-
 blogs = Blueprint('blogs', __name__)
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
@@ -28,8 +27,9 @@ def allowed_file(filename):
 
 def my_renderer(text):
     """Inject markdown renderering into jinja template"""
-    rendered_body = render_template_string(text)
-    pygmented_body = markdown.markdown(rendered_body, extensions=['codehilite', 'fenced_code'])
+    #rendered_body = render_template_string(text)
+    pygmented_body = markdown.markdown(text, extensions=['codehilite', 'fenced_code'])
+
     return pygmented_body
 
 @blogs.route('/blog_added')

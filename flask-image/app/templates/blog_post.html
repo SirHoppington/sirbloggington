@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% block head %}
     <style>
-    li {
+    .series_list {
         list-style-type: none;
     }
     </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+
 {% endblock head %}
 {% block content %}
 <div class="container">
@@ -21,7 +23,7 @@
                     <h2> {{series.name}} Series </h2>
                     <ol>
                       {% for post in blog_series %}
-                      <li> <a href={{ url_for('blogs.get_single_blog', title=post.title) }}> {{ loop.index}}. {{ post.title }}</a></li>
+                      <li class="series_list"> <a href={{ url_for('blogs.get_single_blog', title=post.title) }}> {{ loop.index}}. {{ post.title }}</a></li>
                       {% endfor %}
                     </ol>
                   </div>
