@@ -94,8 +94,8 @@ def create_blog():
                 idInt = str(id).replace('(', '').replace(',', '').replace(')', '')
                 with mail.connect() as conn:
                     for subscriber in subscribers:
-                        message = 'A new blog has been posted head over to www.hopnets.co.uk/blog/{}'.format(idInt)
-                        subject = 'Hopnets Blog time!'
+                        message = 'A new blog has been posted head over to www.sirhoppington.com/blog/{}'.format(form.title.data)
+                        subject = 'SirHoppington Blog time!'
                         msg = Message(recipients=[subscriber.email],
                                       body=message,
                                       subject=subject)
@@ -126,7 +126,7 @@ def sitemap():
       for rule in current_app.url_map.iter_rules():
           if "GET" in rule.methods and len(rule.arguments)==0:
               pages.append(
-                           ["https://hopnets.com"+str(rule.rule),ten_days_ago]
+                           ["https://sirhoppington.com"+str(rule.rule),ten_days_ago]
                            )
 
       sitemap_xml = render_template('sitemap.xml', pages=pages)
