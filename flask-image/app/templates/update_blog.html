@@ -15,7 +15,7 @@
 	   $(document).ready(function (e) {
 	       var example2 = new Taggle('example2', {tags:[
 			{% for tag in query_tags %}
-		   '{{tag.name }}'
+		   '{{tag.name }}',
 		   {% endfor %}
         ]});
 	       var simplemde = new SimpleMDE({
