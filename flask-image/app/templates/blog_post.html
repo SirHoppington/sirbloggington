@@ -20,7 +20,7 @@
               <br>
                   {% if series %}
                   <div class="card-header">
-                    <h2> {{series.name}} Series </h2>
+                    <h2> {{series.name}}</h2>
                     <ol>
                       {% for post in blog_series %}
                       <li class="series_list"> <a href={{ url_for('blogs.get_single_blog', title=post.title) }}> {{ loop.index}}. {{ post.title }}</a></li>
