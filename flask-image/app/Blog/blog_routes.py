@@ -17,6 +17,7 @@ from datetime import datetime
 from flask_mail import Message
 import markdown
 from app.utilities.model_utilities import add_series
+from datetime import datetime
 
 blogs = Blueprint('blogs', __name__)
 
@@ -260,6 +261,7 @@ def update_blog(title):
                     blog.content = form.contentcode.data
                 if blog.summary != form.summary.data:
                     blog.summary = form.summary.data
+                blog.created_at = datetime.utcnow()
                 new_tags = request.form.getlist('tags[]')
 
                 for current_tag in q_tags:
