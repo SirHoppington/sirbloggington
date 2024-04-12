@@ -1,17 +1,12 @@
 *assets
 *.scss
 /Vagrant
-docker-compose.yml
 *.log
 Vagrantfile
 *.save
-Dockerfile
-database.env
 .vagrant
 .idea
 /blog
-postgres
-config.py
 /migrations
 .sh
 .sql
@@ -219,3 +214,5 @@ flask-image/package.json
 flask-image/app/static/main.scss
 flask-image/app/static/main.scss
 flask-image/app/static/main.scss
+
+/unifi
