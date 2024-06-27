@@ -32,6 +32,7 @@ def create_app(config_name=None):
 
     @app.before_first_request
     def create_admin():
+        db.create_all()
         # if this returns a user, then the email already exists in database
         if not User.query.filter_by(email=default_admin).first():
             # Generate default admin user account:
