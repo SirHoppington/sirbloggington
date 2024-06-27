@@ -212,3 +212,5 @@ database.env
 /flask-image/postgres_key
 /flask-image/postgres_key.pub
 
+postgres-data
+.database.env
