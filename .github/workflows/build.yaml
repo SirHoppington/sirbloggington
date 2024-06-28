@@ -17,19 +17,7 @@ jobs:
         script: |
             cd ./sirbloggington
             git pull
+            docker system prune -f
             docker-compose down
-            docker image prune -a -f
             docker-compose up -d --build
-    # - name: Setup SSH
-    #   run: |
-    #       mkdir -p ~/.ssh
-    #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-    #       chmod 600 ~/.ssh/id_rsa
-    #       ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-
-    # - name: Test SSH Connection
-    #   run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@${{ secrets.HOST }} "echo 'SSH connection successful!'"
-
-    # - name: Run SSH Command
-    #   run: |
-    #       ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'ls -l'
+            
