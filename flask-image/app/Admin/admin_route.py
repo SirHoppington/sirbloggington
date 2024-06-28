@@ -12,7 +12,7 @@ admin = Blueprint('admin', __name__)
 GITHUB_SECRET: str = os.getenv('GITHUB_SECRET', 'PLACEHOLDER')
 
 @admin.route('/github-webhook', methods=['POST'])
-def signup_post():
+def webhook():
 
     if request.method == 'POST':
         if not verify_signature(request):
