@@ -22,6 +22,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-    - name: Run SSH Command
-      run: |
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'ls -l'
+    - name: Test SSH Connection
+      run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no nickhopgood@gmail.com@${{ secrets.HOST }} "echo 'SSH connection successful!'"
+
+    # - name: Run SSH Command
+    #   run: |
+    #       ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} 'ls -l'
