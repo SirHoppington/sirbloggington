@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - main
-# Build Digital Ocean
+# Build Digital Ocean test
 jobs:
   build-prod:
     runs-on: ubuntu-latest
