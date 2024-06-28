@@ -23,7 +23,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
     - name: Test SSH Connection
-      run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no nickhopgood@gmail.com@${{ secrets.HOST }} "echo 'SSH connection successful!'"
+      run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@${{ secrets.HOST }} "echo 'SSH connection successful!'"
 
     # - name: Run SSH Command
     #   run: |
