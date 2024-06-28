@@ -7,23 +7,23 @@ jobs:
   build-prod:
     runs-on: ubuntu-latest
     steps:
-    # - name: executing remote ssh commands using password
-    #   uses: appleboy/ssh-action@v1.0.3
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     username: ${{ secrets.USERNAME }}
-    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-    #     port: ${{ secrets.PORT }}
-    #     script: ls -l
-    - name: Setup SSH
-      run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.PORT }}
+        script: ls -l
+    # - name: Setup SSH
+    #   run: |
+    #       mkdir -p ~/.ssh
+    #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+    #       chmod 600 ~/.ssh/id_rsa
+    #       ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
 
-    - name: Test SSH Connection
-      run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@${{ secrets.HOST }} "echo 'SSH connection successful!'"
+    # - name: Test SSH Connection
+    #   run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@${{ secrets.HOST }} "echo 'SSH connection successful!'"
 
     # - name: Run SSH Command
     #   run: |
