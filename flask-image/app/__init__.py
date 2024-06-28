@@ -49,6 +49,9 @@ def create_app(config_name=None):
     from app.Blog.blog_routes import blogs
     app.register_blueprint(blogs)
 
+    from app.Admin.admin_route import admin
+    app.register_blueprint(admin)
+
     from app.User.user_model import User
 
     from app.Login.login_route import login
