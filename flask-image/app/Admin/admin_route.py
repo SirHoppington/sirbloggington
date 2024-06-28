@@ -13,7 +13,7 @@ GITHUB_SECRET: str = os.getenv('GITHUB_SECRET', 'PLACEHOLDER')
 
 @admin.route('/github-webhook', methods=['POST'])
 def webhook():
-
+    # test update
     if request.method == 'POST':
         if not verify_signature(request):
             abort(403)
