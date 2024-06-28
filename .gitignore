@@ -1,3 +1,9 @@
+certbot/
+.env
+/data
+*back_up*
+/postgres-data
+postgres-data
 /Vagrant
 docker-compose.yml
 *.log
