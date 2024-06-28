@@ -1,11 +1,13 @@
 <html>
 <head>
- <meta charset="UTF-8">
+  <meta name="description" content="Discover Network and automation topics and latest trends.">
+  <meta charset="UTF-8">
+  <html lang="en">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='imgs/favicon.png')}}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='imgs/favicon.png')}}" alt="website favicon icon">
   {% if title %}
-  <title>{{ title }} - HopNets</title>
+  <title>{{ title }} - SirHoppington</title>
     <meta name="description" content= "{{ title }}">
   {% else %}
   <title>HopNets</title>
@@ -20,7 +22,7 @@
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-        <a class="""nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img class="img-logo" src="{{url_for('static', filename='imgs/new-logo-small.png')}}"> </a>
+        <a class="""nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img class="img-logo" src="{{url_for('static', filename='imgs/new-logo-small.png')}}" alt="navbar site logo of SirHoppington"> </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -45,7 +47,7 @@
       <button class="btn btn-outline-success my-2 my-sm-0" onclick="openSubscribe()">Subscribe</button>
             <div class="form-popup" id="myForm">
                 <form action= "{{ url_for('login.subscribe')}}" method="post" class="form-container">
-    <h1>Subscribe</h1>
+    <h2>Subscribe</h2>
 
                     <label for="name"><b>Name</b></label>
                     <input type="text" placeholder="Enter Name" name="name" required>
@@ -82,7 +84,7 @@ function closeSubscribe() {
 {% block content %}{% endblock %}
   <footer class="py-5 bg-light">
     <div class="container">
-      <p class="m-0 text-center text-black-50">Copyright &copy; HopNets 2022</p>
+      <p class="m-0 text-center text-black-50">Copyright &copy; HopNets 2024</p>
         {% block foot %}{% endblock %}
     </div>
     <!-- /.container -->
