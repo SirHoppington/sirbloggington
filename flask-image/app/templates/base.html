@@ -23,7 +23,9 @@
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="""nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img class="img-logo" src="{{url_for('static', filename='imgs/sirhoppington.png')}}" alt="navbar site logo of SirHoppington"> </a>
+        <a class="""nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img
+        src="{{url_for('static', filename='imgs/sirhoppington.png')}}" alt="Large Logo" class="img-logo d-none d-sm-block">
+        <img src="{{url_for('static', filename='imgs/small.png')}}" alt="Small Logo" class="img-logo d-block d-sm-none"> </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -32,7 +34,7 @@
                 {% for topic in topics %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}"> {{ topic.name }} </a>
-                    </li>
+                      </li>
                 {% endfor %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
