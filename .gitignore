@@ -166,6 +166,7 @@ pip-selfcheck.json
 # *.iml
 # *.ipr
 
+.DS_Store
 # CMake
 cmake-build-*/
 
