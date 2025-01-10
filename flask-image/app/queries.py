@@ -8,6 +8,9 @@ def blogs_query():
     result = Blog.query.all()
     return result
 
+def blogs_by_author(id):
+    result = Blog.query.filter_by(user_id=id).all()
+    return result
 
 #Query all subscribers:
 def subscribers_query():

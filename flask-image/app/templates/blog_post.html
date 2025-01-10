@@ -12,7 +12,7 @@
 	  <div class="col-lg-8">
           <div class="card my-4 box-shadow h-md-250">
               <div class="card-header"> <br> <h1> {{ blog.title }} </h1>
-                  <p> Posted by Nick Hopgood under {%  for tag in query_tags %} <a href={{ url_for('blogs.get_tags', tag=tag.name) }}>{{ tag.name }}</a> {% if not loop.last %}, {% endif %}{% endfor %} on: {{ blog.created_at.strftime('%d-%m-%Y') }}</p>
+                  <p> Posted by <a href={{ url_for('user_route.get_profile', id=blog.author.id) }}>{{blog.author.firstname[0]|upper }}{{ blog.author.firstname[1:] }} {{blog.author.lastname[0]|upper }}{{ blog.author.lastname[1:] }}</a> under {%  for tag in query_tags %} <a href={{ url_for('blogs.get_tags', tag=tag.name) }}>{{ tag.name }}</a> {% if not loop.last %}, {% endif %}{% endfor %} on: {{ blog.created_at.strftime('%d-%m-%Y') }}</p>
                   </div>
                   <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
               <br>
@@ -21,7 +21,24 @@
                   <hr>
                   </div>
           </div>
+            <div id="disqus_thread"></div>
       </div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    var disqus_config = function () {
+      {% if environment == "production" %}
+      this.page.url = "https://sirhoppington.com{{ url_for(request.endpoint) }}";  // Replace PAGE_URL with your page's canonical URL variable
+      {% endif %}
+  };
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://hopnets.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
           <div class="col-md-4">
         <!-- Categories Widget -->
         <div class="card my-4">

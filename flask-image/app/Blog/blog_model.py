@@ -12,6 +12,11 @@ class Blog(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     tags = db.relationship('Tag', secondary=tag_blog, backref=db.backref('blogs_associated', lazy="dynamic"))
 
+    user_id = db.Column(db.Integer, db.ForeignKey('user_table.id'), nullable=True)
+    
+    # Define the relationship
+    author = db.relationship('User', back_populates='blogs')
+
     def __init__(self, title, content, summary, feature_image, thumbnail):
         self.title = title,
         self.content = content,

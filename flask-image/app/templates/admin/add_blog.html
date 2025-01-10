@@ -1,0 +1,25 @@
+{% extends 'admin/model/create.html' %}
+{% block tail %}
+    {{ super() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var textarea = document.querySelector('.simplemde'); // Ensure this matches the field's class
+            if (textarea) {
+                var simplemde = new SimpleMDE({
+                    element: textarea
+                });
+    
+                // Sync SimpleMDE content to textarea before form submission
+                var form = textarea.closest('form');
+                form.addEventListener('submit', function () {
+                    textarea.value = simplemde.value(); // Force the textarea value to be updated
+                });
+    
+                // Ensure SimpleMDE is updated when typing
+                simplemde.codemirror.on('change', function() {
+                    textarea.value = simplemde.value();  // Update textarea with editor content
+                });
+            }
+        });
+    </script>
+{% endblock %}
