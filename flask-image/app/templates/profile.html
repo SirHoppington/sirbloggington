@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block head %}
+    <style>.jumbotron {
+    background-image: url("{{url_for('static', filename='imgs/nasa.jpg') }}");
+    background-size: cover;}
+    </style>
+{% endblock %}
+{% block content %}
+    <br>
+    <div class="container">
+        <div class="row mb-2">
+            <h1>{{author.firstname[0]|upper }}{{ author.firstname[1:] }} {{author.lastname[0]|upper }}{{ author.lastname[1:] }}'s Blog Posts</h1>
+        </div>
+        <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
+        <div class="col-md-6 px-0">
+            <h1 class="display-4 font-italic">{{ featured.title }}</h1>
+        <p class="lead my-3"> {{ featured.summary }}</p>
+            <p class="lead mb-0">
+                <a href={{ url_for('blogs.get_single_blog', title=featured.title) }}> Continue reading..</a>
+            </p>
+        </div>
+    </div>
+<div class="row mb-2">
+{%  for blog in homepage %}
+    <div class="col-md-6">
+<div class="card flex-md-row mb-4 box-shadow h-md-250">
+        <div class="col p-4 d-flex flex-column position-static shadow-sm">
+            <strong class="d-inline-block mb-2 text-primary">
+            {%  for tag in tags %}
+                {% if tag[1].id == blog.id %}
+                    <a href={{ url_for('blogs.get_tags', tag=tag[0].name) }}>{{ tag[0].name }}</a>
+                {% endif %}
+            {% endfor %}
+             </strong>
+    <h3 classs="mb-0">
+        <a class="text-dark" href={{ url_for('blogs.get_single_blog', title=blog.title) }}> {{ blog.title }}</a>
+    </h3>
+        <div class="mb-1 text-muted"> Posted by Nick Hopgood on {{ blog.created_at.strftime('%d-%m-%Y') }} </div>
+        <p class="card-text mb-auto">
+            {{ blog.summary }}
+        </p>
+        <a href={{ url_for('blogs.get_single_blog', title=blog.title) }}> Continue reading.. </a>
+    </div>
+    <img class=" card-img-right flex-auto d-none d-md-block" data-src="holder.js/200x250?theme=thumb" alt="Thumbnail [200x250}" style="width: 200px; height: 250px;" src="{{url_for('static', filename='imgs/'+blog.thumbnail) }}" data-holder-rendered="true">
+    </div>
+    </div>
+{%  endfor %}
+</div>
+    </div>
+{% endblock content %}

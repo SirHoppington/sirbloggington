@@ -1,0 +1,18 @@
+{% extends 'admin/master.html' %}
+{% block body %}
+
+<header>
+    <h1>Welcome to the Admin Dashboard</h1>
+    {% if user_email %}
+        <p>Signed in as: {{ user_email }}</p>
+        <a href="/logout">Logout</a>
+    {% else %}
+        <p>You are not logged in.</p>
+        <a href="/login">Login</a>
+    {% endif %}
+</header>
+<main>
+    <!-- Add your admin content here -->
+    <p>This is the admin dashboard.</p>
+</main>     
+{% endblock%}

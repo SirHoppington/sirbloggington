@@ -1,0 +1,11 @@
+{% extends 'admin/model/edit.html' %}
+{% block tail %}
+    {{ super() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.simplemde').forEach(function(el) {
+                new SimpleMDE({ element: el });
+            });
+        });
+    </script>
+{% endblock %}

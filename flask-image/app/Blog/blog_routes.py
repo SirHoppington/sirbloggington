@@ -6,6 +6,7 @@ from app import mail
 from flask_jwt_extended import jwt_required
 from app.Blog.blog_model import Blog
 from app.Tag.tag_model import Tag
+from app.User.user_model import User
 from app.Tags_Blog.tag_blog_table import tag_blog
 from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
@@ -17,7 +18,7 @@ from flask_mail import Message
 import markdown
 import gzip
 import subprocess
-
+from sqlalchemy.orm import joinedload
 
 blogs = Blueprint('blogs', __name__)
 
@@ -133,19 +134,21 @@ def get_single_blog(title):
     blogs = blogs_query()
 
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    blog = db.session.query(Blog.title, Blog.content, Blog.feature_image,
-                            Blog.created_at, Tag.name).filter(Blog.title == title).first()
+    blog = Blog.query.options(joinedload(Blog.author)).filter_by(title=title).first()
     id = db.session.query(Blog).filter(Blog.title == title).first()
+    print(f"blog author is {blog.author}")
     all_tags = Tag.query.all()
     html = my_renderer(blog.content)
     query_tags = db.session.query(Tag.name).filter(
         (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
+    # author = db.session.query(User.id).filter(
+    #     (User.id == id.user_id) & (tag_blog.c.tag_id == Tag.id)).all()
     middle_index = len(query_tags)//2
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
     return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
-                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title)
+                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title, environment=os.getenv("ENVIRONMENT", "development"))
 
 
 @blogs.route('/<tag>', methods=["GET"])

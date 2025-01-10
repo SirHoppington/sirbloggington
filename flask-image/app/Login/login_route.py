@@ -1,5 +1,5 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash
-from flask_login import login_user
+from flask import Blueprint, request, jsonify, render_template, redirect, url_for, flash, session
+from flask_login import login_user, login_required, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.User.user_model import User
 from app.Subscriber.subscriber_model import Subscriber
@@ -22,7 +22,7 @@ def signup_post():
             return redirect(url_for('login.signup_post'))
 
         # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-        new_user = User(email=email, password=generate_password_hash(password, method='sha256'))
+        new_user = User(email=email, password=generate_password_hash(password, method='sha256'), firstname="nick", lastname="hopgood", role="admin")
 
         # add the new user to the database
         db.session.add(new_user)
@@ -30,6 +30,32 @@ def signup_post():
 
         return redirect(url_for('login.log_in'))
     return render_template('signup.html')
+
+@login.route('/register', methods=['POST',"GET", "POST"])
+@login_required
+def register():
+
+    if request.method == 'POST':
+
+        email = "nickhopgood@gmail.com"
+        password = request.form.get('password')
+
+        user = User.query.filter_by(email=email).first() # if this returns a user, then the email already exists in database
+
+        if user: # if a user is found, we want to redirect back to signup page so user can try again
+            flash('Email address signed up.')
+            return redirect(url_for('login.signup_post'))
+
+        # create a new user with the form data. Hash the password so the plaintext version isn't saved.
+        new_user = User(email=email, password=generate_password_hash(password, method='sha256'), firstname="nick", lastname="hopgood", role="admin")
+
+        # add the new user to the database
+        db.session.add(new_user)
+        db.session.commit()
+
+        return redirect(url_for('login.log_in'))
+    return render_template('signup.html')
+
 
 @login.route('/login', methods=["GET", "POST"])
 def log_in():
@@ -54,6 +80,15 @@ def log_in():
 
     return render_template('login.html')
 
+@login.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    if session.get('was_once_logged_in'):
+        # prevent flashing automatically logged out message
+        del session['was_once_logged_in']
+    flash('You have successfully logged yourself out.')
+    return redirect('/login')
 
 @login.route('/subscribe', methods=['POST'])
 def subscribe():
@@ -77,3 +112,9 @@ def subscribe():
         db.session.commit()
 
         return "Welcome {} thanks for subscribing!".format(name)
+
+@login.route('/test')
+def test():
+    if current_user.is_authenticated:
+        return f"Logged in as: {current_user.email}"
+    return "Not logged in"
