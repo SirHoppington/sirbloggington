@@ -43,4 +43,5 @@ WTForms==2.3.3
 zipp==3.6.0
 python-dotenv==1.0.1
 gunicorn==21.2.0
-
+pillow==10.4.0
+flask-admin==1.6.1
