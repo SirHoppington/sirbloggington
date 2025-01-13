@@ -204,26 +204,6 @@ class CustomUserModel(ModelView):
         )
     }
 
-    def on_model_change(self, form, model, is_created):
-        # Handle the cropped image data
-        cropped_data = form.croppedImageData.data
-        if cropped_data:
-            try:
-                # Decode the Base64 image data
-                cropped_image_data = b64decode(cropped_data.split(',')[1])  # Remove Base64 prefix
-                image = Image.open(BytesIO(cropped_image_data))
-
-                # Save the cropped image
-                filename = f"{model.id}_profile_pic.png"
-                save_path = os.path.join(UPLOAD_FOLDER, filename)
-                image.save(save_path)
-
-                # Update the model's profile_pic field
-                model.profile_pic = filename
-            except Exception as e:
-                raise ValueError(f"Error processing image: {e}")
-    
-
 class MessageAdmin(ModelView):
     # Include SimpleMDE's JavaScript and CSS
     extra_js = [

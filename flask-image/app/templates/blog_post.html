@@ -35,14 +35,14 @@
               <br>
           {{blog.created_at.strftime('%d-%m-%Y') }}
           {{ reading_time }} </p>
-          <p>
-            Tags: {% for tag in second_half_tags %}
-            <a href={{ url_for('blogs.get_tags', tag=tag.name) }} class="badge badge-dark">{{ tag.name }}</a>
-            {% endfor %}
-          </p>
         </div>
         <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
         <br>
+        <p>
+          Tags: {% for tag in second_half_tags %}
+          <a href={{ url_for('blogs.get_tags', tag=tag.name) }} class="badge bg-primary">{{ tag.name }}</a>
+          {% endfor %}
+        </p>
         <div class="card-body">
           {{ html|safe }}
           <hr>
