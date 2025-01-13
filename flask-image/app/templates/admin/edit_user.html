@@ -1,76 +1,11 @@
 {% extends 'admin/model/edit.html' %}
 {% block tail %}
     {{ super() }}
-    <style>
-        img {
-            max-width: 100%; /* This rule is very important, please do not ignore this! */
-          }
-        #canvas {
-            height: 600px;
-            width: 600px;
-            background-color: #ffffff;
-            cursor: default;
-            border: 1px solid black;
-          }
-    </style>
-    <div>
-        <label for="profilePicFile">Upload Profile Picture:</label>
-        <input type="file" id="profilePicFile" accept="image/*">
-    </div>
-    <div id="cropContainer" style="display: none;">
-        <img id="cropImage" style="max-width: 100%;" />
-    </div>
-    <button id="cropButton" style="display: none;">Crop</button>
-    <input type="hidden" id="croppedImageData" name="croppedImageData">
-    <div>
-        <canvas id="canvas">
-          Your browser does not support the HTML5 canvas element.
-        </canvas>
-      </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.simplemde').forEach(function(el) {
                 new SimpleMDE({ element: el });
             });
-        });
-        let cropper;
-        const profilePicFileInput = document.getElementById('profilePicFile');
-        const cropContainer = document.getElementById('cropContainer');
-        const cropImage = document.getElementById('cropImage');
-        const cropButton = document.getElementById('cropButton');
-        const croppedImageDataInput = document.getElementById('croppedImageData');
-
-        profilePicFileInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    cropImage.src = e.target.result;
-                    cropContainer.style.display = 'block';
-                    cropButton.style.display = 'inline-block';
-
-                    // Initialize Cropper.js
-                    if (cropper) cropper.destroy();
-                    cropper = new Cropper(cropImage, {
-                        aspectRatio: 1, // Square cropping for profile pictures
-                        viewMode: 1,
-                    });
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        cropButton.addEventListener('click', () => {
-            if (cropper) {
-                const croppedCanvas = cropper.getCroppedCanvas();
-                croppedCanvas.toBlob((blob) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                        croppedImageDataInput.value = reader.result; // Base64 data
-                    };
-                    reader.readAsDataURL(blob);
-                });
-            }
         });
     </script>
 {% endblock %}
