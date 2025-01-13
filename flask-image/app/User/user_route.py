@@ -11,6 +11,7 @@ from app.Tags_Blog.tag_blog_table import tag_blog
 from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
 from app.queries import blogs_query, subscribers_query, all_tags_query, tags_query, blogs_by_author
+from app.utilities import estimate_reading_time
 
 from werkzeug.utils import secure_filename
 from datetime import datetime

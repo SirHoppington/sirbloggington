@@ -18,6 +18,9 @@ from wtforms.validators import DataRequired
 from flask_admin.form import Select2Widget
 from wtforms import SelectMultipleField, StringField
 from wtforms.validators import ValidationError
+from PIL import Image
+from io import BytesIO
+from base64 import b64decode
 
 github = Blueprint('github', __name__)
 
@@ -173,6 +176,53 @@ class SimpleMDETextAreaField(TextAreaField):
 
 
 UPLOAD_FOLDER = os.path.join('app/static/imgs')
+
+class CustomUserModel(ModelView):
+    # Include SimpleMDE's JavaScript and CSS
+    extra_js = [
+        'https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js',
+        'https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js'
+    ]
+    extra_css = [
+        'https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css',
+        'https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css'
+        ]
+
+    edit_template = "admin/edit_user.html"
+    create_template = "admin/add_user.html"
+    # Override the form field to use SimpleMDE
+    form_overrides = {
+        'bio': SimpleMDETextAreaField,
+        }
+    
+    form_extra_fields = {
+        'profile_pic': ImageUploadField(
+            label='Profile Picture',
+            base_path=UPLOAD_FOLDER,          # Local path for file storage
+            url_relative_path='/',    # Relative URL for file access
+            allowed_extensions=['jpg', 'jpeg', 'png', 'gif']
+        )
+    }
+
+    def on_model_change(self, form, model, is_created):
+        # Handle the cropped image data
+        cropped_data = form.croppedImageData.data
+        if cropped_data:
+            try:
+                # Decode the Base64 image data
+                cropped_image_data = b64decode(cropped_data.split(',')[1])  # Remove Base64 prefix
+                image = Image.open(BytesIO(cropped_image_data))
+
+                # Save the cropped image
+                filename = f"{model.id}_profile_pic.png"
+                save_path = os.path.join(UPLOAD_FOLDER, filename)
+                image.save(save_path)
+
+                # Update the model's profile_pic field
+                model.profile_pic = filename
+            except Exception as e:
+                raise ValueError(f"Error processing image: {e}")
+    
 
 class MessageAdmin(ModelView):
     # Include SimpleMDE's JavaScript and CSS

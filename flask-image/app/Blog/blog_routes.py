@@ -19,6 +19,7 @@ import markdown
 import gzip
 import subprocess
 from sqlalchemy.orm import joinedload
+from app.utilities import estimate_reading_time
 
 blogs = Blueprint('blogs', __name__)
 
@@ -146,9 +147,10 @@ def get_single_blog(title):
     middle_index = len(query_tags)//2
     query_blogs = db.session.query(Blog).filter(
         (tag_blog.c.blog_id == id.id) & (tag_blog.c.tag_id == Tag.id)).all()
+    reading_time = estimate_reading_time(blog.content)
     return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
-                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title, environment=os.getenv("ENVIRONMENT", "development"))
+                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title,reading_time=reading_time, environment=os.getenv("ENVIRONMENT", "development"))
 
 
 @blogs.route('/<tag>', methods=["GET"])

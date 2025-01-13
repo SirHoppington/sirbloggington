@@ -69,12 +69,17 @@ def create_app(config_name=None):
 
     from app.Login.login_route import login
     app.register_blueprint(login)
-    from app.Admin.admin_route import SecureModelView, MessageAdmin
+    from app.Admin.admin_route import SecureModelView, MessageAdmin, CustomUserModel
 
-    flask_admin.add_view(SecureModelView(User, db.session))
+    flask_admin.add_view(CustomUserModel(User, db.session))
     flask_admin.add_view(MessageAdmin(Blog, db.session))
     flask_admin.add_view(SecureModelView(Subscriber, db.session))
     flask_admin.add_view(SecureModelView(Tag, db.session))
+
+    @app.context_processor
+    def utilitly_processor():
+        from app.utilities import estimate_reading_time
+        return dict(estimate_reading_time=estimate_reading_time)
 
     @login_manager.user_loader
     def load_user(user_id):
