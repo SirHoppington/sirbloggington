@@ -224,7 +224,7 @@ class MessageAdmin(ModelView):
         'feature_image': ImageUploadField(
             label='Feature Image',
             base_path=UPLOAD_FOLDER,          # Local path for file storage
-            url_relative_path='/',    # Relative URL for file access
+            url_relative_path='/imgs',    # Relative URL for file access
             allowed_extensions=['jpg', 'jpeg', 'png', 'gif']
         ),
         'thumbnail': ImageUploadField(
