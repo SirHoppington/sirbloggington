@@ -26,18 +26,19 @@
   <div class="row mb-2">
     <div class="col">
       <div class="card my-4 box-shadow h-md-250">
-        <div class="card-header"> <br>
+        <div class="card-body"><br>
           <h1> {{ blog.title }} </h1>
-          <img class="card-img-left rounded-circle mr-4" style="width: 120px; border: 4px solid #18BC9C;" src="{{url_for('static', filename='imgs/'+blog.author.profile_pic) }}" alt="">
-          <p><a href={{ url_for('user_route.get_profile', id=blog.author.id)
-              }}>{{blog.author.firstname[0]|upper }}{{ blog.author.firstname[1:] }} {{blog.author.lastname[0]|upper }}{{
+          <img class="card-img-left rounded-circle mr-4" style="width: 100px; border: 4px solid #18BC9C;"
+            src="{{url_for('static', filename='imgs/'+blog.author.profile_pic) }}" alt="">
+          <p><a href={{ url_for('user_route.get_profile', id=blog.author.id) }}>{{blog.author.firstname[0]|upper }}{{
+              blog.author.firstname[1:] }} {{blog.author.lastname[0]|upper }}{{
               blog.author.lastname[1:] }}</a>
-              <br>
-          {{blog.created_at.strftime('%d-%m-%Y') }}
-          {{ reading_time }} </p>
+            <br>
+            {{blog.created_at.strftime('%d-%m-%Y') }}
+            {{ reading_time }}
+          </p>
         </div>
         <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
-        <br>
         <p>
           Tags: {% for tag in second_half_tags %}
           <a href={{ url_for('blogs.get_tags', tag=tag.name) }} class="badge bg-primary">{{ tag.name }}</a>
@@ -51,23 +52,23 @@
     </div>
   </div>
   <div>
-  <div class="row">
-    <div class="col">
-      <div class="card my-4 box-shadow h-md-250">
-        <h5 class="card-header">Related articles</h5>
-        <div class="card-body">
-          {% for tag in query_blogs %}
-          {% if not blog.title == tag.title %}
-          <li>
-            <a href={{ url_for('blogs.get_single_blog', title=tag.title) }}> {{ tag.title }} </a> {{
-            tag.created_at.strftime('%d/%m/%Y') }}
-          </li>
-          {% endif %}
-          {% endfor %}
+    <div class="row">
+      <div class="col">
+        <div class="card my-4 box-shadow h-md-250">
+          <h5 class="card-header">Related articles</h5>
+          <div class="card-body">
+            {% for tag in query_blogs %}
+            {% if not blog.title == tag.title %}
+            <li>
+              <a href={{ url_for('blogs.get_single_blog', title=tag.title) }}> {{ tag.title }} </a> {{
+              tag.created_at.strftime('%d/%m/%Y') }}
+            </li>
+            {% endif %}
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>
+    <div id="disqus_thread"></div>
   </div>
-  <div id="disqus_thread"></div>
-</div>
-{% endblock content %}
+  {% endblock content %}

@@ -1,25 +1,22 @@
 import os
-from flask import Blueprint, request, jsonify, make_response, render_template, render_template_string, url_for, redirect, json, send_from_directory
-from flask_login import login_required, current_user
+from flask import Blueprint, request, jsonify, render_template, render_template_string
+from flask_login import login_required
 from app import db
 from app import mail
-from flask_jwt_extended import jwt_required
+from app import sitemapper
 from app.Blog.blog_model import Blog
 from app.Tag.tag_model import Tag
-from app.User.user_model import User
 from app.Tags_Blog.tag_blog_table import tag_blog
 from app.Subscriber.subscriber_model import Subscriber
 from app.forms import AddBlog
 from app.queries import blogs_query, subscribers_query, all_tags_query, tags_query
-
+from app.utilities import generate_articles, generate_tags
 from werkzeug.utils import secure_filename
-from datetime import datetime
 from flask_mail import Message
 import markdown
-import gzip
-import subprocess
 from sqlalchemy.orm import joinedload
 from app.utilities import estimate_reading_time
+
 
 blogs = Blueprint('blogs', __name__)
 
@@ -34,11 +31,9 @@ def my_renderer(text):
     pygmented_body = markdown.markdown(rendered_body, extensions=['codehilite', 'fenced_code'])
     return pygmented_body
 
-
 @blogs.route('/blog_added')
 def blog_added():
     return render_template("blog_added.html")
-
 
 
 @blogs.route('/add_blog', methods=["POST", "GET"])
@@ -102,20 +97,6 @@ def create_blog():
         #return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
     return render_template("add_blog.html",
                            form=form, blogs=latest[:4], topics=all_tags[0:20])
-
-
-#@blogs.route('/robots.txt')
-#def static_from_root():
-#    return send_from_directory(app.static_folder, request.path[1:])
-
-
-@blogs.route('/sitemap.xml')
-def static_from_root():
-    #return send_static_file('sitemap.xml')
-    # Change to accept jinja variables
-    return url_for('static', filename='sitemap.xml')
-
-
 @blogs.route('/', methods=["GET"])
 def get_all_blogs():
     blogs = blogs_query()
@@ -128,7 +109,7 @@ def get_all_blogs():
         return render_template('index.html', blogs=latest[:10],
                                tags=tags, homepage=latest[1:4], featured=latest[0], topics=all_tags[0:20])
 
-
+@sitemapper.include(url_variables=generate_articles)
 @blogs.route('/blog/<title>', methods=["GET"])
 def get_single_blog(title):
 
@@ -152,7 +133,7 @@ def get_single_blog(title):
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
                            second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title,reading_time=reading_time, environment=os.getenv("ENVIRONMENT", "development"))
 
-
+@sitemapper.include(url_variables=generate_tags)
 @blogs.route('/<tag>', methods=["GET"])
 def get_tags(tag):
     blogs = Blog.query.all()
@@ -260,3 +241,8 @@ def delete_blog(id):
     db.session.commit()
 
     return jsonify("Blog was deleted"), 200
+
+
+@blogs.route("/sitemap.xml")
+def r_sitemap():
+  return sitemapper.generate()

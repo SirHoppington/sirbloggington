@@ -11,12 +11,16 @@ from werkzeug.security import generate_password_hash
 from flask_simplemde import SimpleMDE
 from flask_login import LoginManager
 from flask_mail import Mail
+from flask_sitemapper import Sitemapper
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 mail = Mail()
 flask_admin = FlaskAdmin()
+sitemapper = Sitemapper()
+
+
 
 def create_app(config_name=None):
     if config_name is None:
@@ -71,6 +75,8 @@ def create_app(config_name=None):
     app.register_blueprint(login)
     from app.Admin.admin_route import SecureModelView, MessageAdmin, CustomUserModel
 
+    sitemapper.init_app(app)
+    
     flask_admin.add_view(CustomUserModel(User, db.session))
     flask_admin.add_view(MessageAdmin(Blog, db.session))
     flask_admin.add_view(SecureModelView(Subscriber, db.session))
