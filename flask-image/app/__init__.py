@@ -8,7 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import config, default_admin, admin_password, default_firstname, default_lastname
 from werkzeug.security import generate_password_hash
-from flask_simplemde import SimpleMDE
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_sitemapper import Sitemapper
@@ -32,30 +31,29 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app,db)
     CORS(app)
-    SimpleMDE(app)
     mail.init_app(app)
     flask_admin.init_app(app)
     login_manager.login_view='login.log_in'
     login_manager.init_app(app)
 
-    @app.before_first_request
-    def create_admin():
-        db.create_all()
-        # if this returns a user, then the email already exists in database
-        if not User.query.filter_by(email=default_admin).first():
-            # Generate default admin user account:
-            new_user = User(
-                email=default_admin,
-                password=generate_password_hash(
-                    admin_password, method='sha256'),
-                firstname=default_firstname,
-                lastname=default_lastname,
-                role="admin")
+    with app.app_context():
+        def create_admin():
+            db.create_all()
+            # if this returns a user, then the email already exists in database
+            if not User.query.filter_by(email=default_admin).first():
+                # Generate default admin user account:
+                new_user = User(
+                    email=default_admin,
+                    password=generate_password_hash(
+                        admin_password, method='sha256'),
+                    firstname=default_firstname,
+                    lastname=default_lastname,
+                    role="admin")
 
-            # add the new user to the database
-            db.session.add(new_user)
-            db.session.commit()
-        return True
+                # add the new user to the database
+                db.session.add(new_user)
+                db.session.commit()
+            return True
 
     from app.Blog.blog_routes import blogs
     app.register_blueprint(blogs)
