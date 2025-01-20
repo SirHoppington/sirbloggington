@@ -5,7 +5,7 @@
 <br>
 <br>
  <div class="container">
-     <h1> Tag: {{ tag.name }} </h1>
+    <h1>{{ tag.name[0]|upper }}{{ tag.name[1:] }} </h1>
  <br>
  <div class="card-deck">
     {%  for blog in query_blogs %}

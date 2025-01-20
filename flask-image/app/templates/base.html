@@ -44,7 +44,7 @@
             <ul class="navbar-nav mr-auto">
                 {% for topic in topics %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}"> {{ topic.name }} </a>
+                        <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}"> {{ topic.name[0]|upper }}{{ topic.name[1:] }}</a>
                       </li>
                 {% endfor %}
                 <li class="nav-item dropdown">
