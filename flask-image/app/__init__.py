@@ -1,5 +1,5 @@
 import click
-from flask import Flask, redirect, request, render_template
+from flask import Flask, redirect, request, render_template, send_from_directory
 from flask_admin import Admin as FlaskAdmin, BaseView, expose
 from flask_admin.contrib.sqla import ModelView
 from flask.cli import with_appcontext
@@ -23,7 +23,7 @@ sitemapper = Sitemapper()
 
 def create_app(config_name=None):
     if config_name is None:
-        app = Flask(__name__, instance_path='/usr/var/src/app')
+        app = Flask(__name__, instance_path='/usr/var/src/app', static_folder="static")
         app.config.from_object(config.get('development'))
     else:
         app = Flask(__name__, instance_path='/usr/var/src/app')
@@ -79,6 +79,15 @@ def create_app(config_name=None):
     flask_admin.add_view(MessageAdmin(Blog, db.session))
     flask_admin.add_view(SecureModelView(Subscriber, db.session))
     flask_admin.add_view(SecureModelView(Tag, db.session))
+
+    # @app.route("/sitemap.xml")
+    # def sitemap():
+    #     return sitemapper.generate()
+
+    @app.route('/robots.txt')
+    @app.route('/sitemap.xml')
+    def static_from_root():
+        return send_from_directory(app.static_folder, request.path[1:])
 
     @app.context_processor
     def utilitly_processor():

@@ -243,6 +243,6 @@ def delete_blog(id):
     return jsonify("Blog was deleted"), 200
 
 
-@blogs.route("/sitemap.xml")
-def r_sitemap():
-  return sitemapper.generate()
+# @blogs.route("/sitemap.xml")
+# def r_sitemap():
+#   return sitemapper.generate()
