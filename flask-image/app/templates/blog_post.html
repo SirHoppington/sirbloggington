@@ -45,7 +45,7 @@
         </div>
       </div>
       </div>
-        <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="">
+        <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="Feature image for {{blog.summary}}">
         <p>
           Tags: {% for tag in second_half_tags %}
           <a href={{ url_for('blogs.get_tags', tag=tag.name) }} class="badge bg-primary">{{ tag.name }}</a>
