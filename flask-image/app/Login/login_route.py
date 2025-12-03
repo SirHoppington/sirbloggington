@@ -81,7 +81,7 @@ def log_in():
 
     # if the above check passes, then we know the user has the right credentials
         login_user(user, remember=remember)
-        return redirect(url_for('blogs.create_blog'))
+        return redirect('/admin')
 
     return render_template('login.html')
 
