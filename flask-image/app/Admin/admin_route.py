@@ -70,7 +70,7 @@ class SecureModelView(ModelView):
     def inaccessible_callback(self, name, **kwargs):
         # Redirect to the login page if the user is not authenticated
         return redirect('/login?next=' + request.path)
-class MyView(BaseView):
+class MyView(ModelView):
     @expose('/')
     def index(self):
         return self.render('admin.html')

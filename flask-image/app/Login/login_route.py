@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.User.user_model import User
 from app.Subscriber.subscriber_model import Subscriber
 from app import db
+import hashlib, hmac
 
 login = Blueprint('login', __name__)
 
@@ -68,6 +69,10 @@ def log_in():
 
         user = User.query.filter_by(email=email).first()
 
+        if user.password.startswith("sha256$"):
+            user.password = generate_password_hash(password)
+            db.session.commit()
+
         # check if the user actually exists
         # take the user-supplied password, hash it, and compare it to the hashed password in the database
         if not user or not check_password_hash(user.password, password):
@@ -118,3 +123,25 @@ def test():
     if current_user.is_authenticated:
         return f"Logged in as: {current_user.email}"
     return "Not logged in"
+
+def verify_password(stored_hash, password):
+    """
+    Supports both:
+    - Modern Werkzeug hashes (pbkdf2:sha256:260000$...)
+    - Old legacy hashes (sha256$<salt>$<hash>)
+    """
+    try:
+        return check_password_hash(stored_hash, password)
+    except ValueError:
+        # Handle legacy hashes
+        if stored_hash.startswith("sha256$"):
+            try:
+                _, salt, hash_val = stored_hash.split("$")
+            except ValueError:
+                return False
+
+            test_hash = hashlib.sha256((salt + password).encode()).hexdigest()
+            return hmac.compare_digest(test_hash, hash_val)
+
+        # Unrecognised format
+        return False
