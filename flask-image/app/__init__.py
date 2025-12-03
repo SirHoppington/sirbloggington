@@ -75,7 +75,7 @@ def create_app(config_name=None):
 
     sitemapper.init_app(app)
     
-    flask_admin.add_view(CustomUserModel(User, db.session))
+    flask_admin.add_view(SecureModelView(User, db.session))
     flask_admin.add_view(MessageAdmin(Blog, db.session))
     flask_admin.add_view(SecureModelView(Subscriber, db.session))
     flask_admin.add_view(SecureModelView(Tag, db.session))
