@@ -97,26 +97,29 @@ def logout():
 
 @login.route('/subscribe', methods=['POST'])
 def subscribe():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    honeypot = request.form.get('website')  # hidden field for bots
 
-    if request.method == 'POST':
+    # SPAM CHECK: if the hidden field is filled → bot
+    if honeypot:
+        return jsonify({"status": "error", "message": "Spam detected"}), 400
 
-        name = request.form.get('name')
-        email = request.form.get('email')
+    # Empty field check
+    if not name or not email:
+        return jsonify({"status": "error", "message": "Name and email required"}), 400
 
-        subscriber = Subscriber.query.filter_by(email=email).first() # if this returns a email, then the email already exists in database
+    # Duplicate email check
+    existing = Subscriber.query.filter_by(email=email).first()
+    if existing:
+        return jsonify({"status": "error", "message": "This email is already subscribed"}), 409
 
-        if subscriber: # if an email is found, we want advise email is already signed up
-            flash('Email address signed up.')
-            return redirect(request.referrer)
+    # Add new subscriber
+    new_subscriber = Subscriber(name=name, email=email)
+    db.session.add(new_subscriber)
+    db.session.commit()
 
-        # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-        new_subscriber = Subscriber(name=name, email=email)
-
-        # add the new user to the database
-        db.session.add(new_subscriber)
-        db.session.commit()
-
-        return "Welcome {} thanks for subscribing!".format(name)
+    return jsonify({"status": "success", "message": f"Welcome {name}, thanks for subscribing!"})
 
 @login.route('/test')
 def test():

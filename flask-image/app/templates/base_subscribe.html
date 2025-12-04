@@ -1,0 +1,169 @@
+<html>
+<!DOCTYPE html>
+
+<head>
+  <meta name="keywords" content="Network, Automation, DevOps, NetDevOps, Cisco, Arista, Containerlab, Python">
+  <meta charset="UTF-8">
+  <html lang="en">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='imgs/favicon.png')}}"
+    alt="website favicon icon">
+  {% if title %}
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ title }}">
+  {% else %}
+  <title>SirHoppington - Networking and Automation Blog</title>
+  {% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css')}}">
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"> </script>
+  <style>
+    .container {
+      max-width: 900px;
+    }
+
+    .form-popup {
+      border-radius: 10px;
+
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary" data-bs-theme="dark">
+  <div class="container-fluid">
+    <a class="nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img
+        src="{{url_for('static', filename='imgs/sirhoppington.png')}}" alt="Large Logo"
+        class="img-logo d-none d-sm-block">
+      <img src="{{url_for('static', filename='imgs/small.png')}}" alt="Small Logo" class="img-logo d-block d-sm-none">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        {% for topic in topics %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}"> {{ topic.name[0]|upper }}{{
+            topic.name[1:] }}</a>
+        </li>
+        {% endfor %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            All Posts
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for blog in blogs %}
+            <a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', title=blog.title)}}"> {{ blog.title }}
+            </a>
+            {% endfor %}
+          </div>
+        </li>
+      </ul>
+      <ul class="navbar-nav justify-content-right">
+        <li class="nav-item">
+          <a class="nav-link" onclick="openSubscribe()">Subscribe</a>
+        </li>
+      </ul>
+      <div class="form-popup" id="myForm">
+        <form id="subscribeForm" class="form-container">
+          <button type="button" class="btn-close btn-close-white" aria-label="Close"
+            onclick="closeSubscribe()"></button>
+          <h2>Subscribe</h2>
+
+          <div id="subscribeMessage" class="alert" style="display:none;"></div>
+
+          <label for="name"><b>Name</b></label>
+          <input type="text" placeholder="Enter Name" name="name" required>
+
+          <label for="email"><b>Email</b></label>
+          <input type="email" placeholder="Enter Email" name="email" required>
+
+          <!-- Honeypot -->
+          <input type="text" name="website" style="display:none;">
+
+          <button type="submit" class="btn bg-primary btn-sm">Subscribe</button>
+        </form>
+      </div>
+      <script>
+        function openSubscribe() {
+          document.getElementById("myForm").style.display = "block";
+        }
+
+        function closeSubscribe() {
+          document.getElementById("myForm").style.display = "none";
+        }
+      </script>
+      <script>
+        document.getElementById("subscribeForm").addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const form = e.target;
+          const messageBox = document.getElementById("subscribeMessage");
+
+          const formData = new FormData(form);
+
+          const response = await fetch("/subscribe", {
+            method: "POST",
+            body: formData
+          });
+
+          const data = await response.json();
+
+          // Styling the message
+          if (data.status === "success") {
+            messageBox.className = "alert alert-success";
+          } else {
+            messageBox.className = "alert alert-danger";
+          }
+
+          messageBox.innerHTML = data.message;
+          messageBox.style.display = "block";
+
+          // Optional: close popup automatically after success
+          if (data.status === "success") {
+            setTimeout(() => {
+              closeSubscribe();
+              messageBox.style.display = "none";
+              form.reset();
+            }, 2500);
+          }
+        });
+      </script>
+    </div>
+  </div>
+</nav>
+<br>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+  {% for message in messages %}
+  <li>{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<body>
+  {% block content %}{% endblock %}
+  <footer class="py-5 bg-light">
+    <div class="container">
+      <p class="m-0 text-center text-black-50">Copyright &copy; SirHoppington 2025</p>
+      {% block foot %}{% endblock %}
+    </div>
+    <!-- /.container -->
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,114 +1,166 @@
-<html>
 <!DOCTYPE html>
+<html lang="en">
+
 <head>
-  <meta name="keywords" content="Network, Automation, DevOps, NetDevOps, Cisco, Arista, Containerlab, Python">
   <meta charset="UTF-8">
-  <html lang="en">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='imgs/favicon.png')}}" alt="website favicon icon">
+  <meta name="keywords" content="Network, Automation, DevOps, NetDevOps, Cisco, Arista, Containerlab, Python">
+
+
   {% if title %}
   <title>{{ title }}</title>
-    <meta name="description" content= "{{ title }}">
+  <meta name="description" content="{{ title }}">
   {% else %}
   <title>SirHoppington - Networking and Automation Blog</title>
   {% endif %}
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.css')}}">
-<script src="https://code.jquery.com/jquery-3.6.0.js"
-  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-  crossorigin="anonymous"> </script>
-<style>
-  .container {
-    max-width: 900px;
-  }
-  
-  .form-popup {
-    border-radius: 10px;
-    
-  }
-</style>
-{% block head %}{% endblock %}
+  <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+    crossorigin="anonymous"> </script>
+  <style>
+    body {
+      padding-top: 80px;
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      max-width: 900px;
+    }
+
+    .navbar-brand img {
+      max-height: 55px;
+    }
+  </style>
+  {% block head %}{% endblock %}
 </head>
-<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary" data-bs-theme="dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm fixed-top">
     <div class="container-fluid">
-        <a class="nav-link" href="{{ url_for('blogs.get_all_blogs') }}"> <img
-        src="{{url_for('static', filename='imgs/sirhoppington.png')}}" alt="Large Logo" class="img-logo d-none d-sm-block">
-        <img src="{{url_for('static', filename='imgs/small.png')}}" alt="Small Logo" class="img-logo d-block d-sm-none"> </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                {% for topic in topics %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}"> {{ topic.name[0]|upper }}{{ topic.name[1:] }}</a>
-                      </li>
-                {% endfor %}
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle show" data-bs-toggle="dropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        All Posts
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        {% for blog in blogs %}
-                            <a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', title=blog.title)}}"> {{ blog.title }} </a>
-                        {% endfor %}
-                    </div>
-                </li>
+      <a class="navbar-brand" href="{{ url_for('blogs.get_all_blogs') }}">
+        <img src="{{url_for('static', filename='imgs/sirhoppington.png')}}" class="d-none d-sm-block" alt="Logo">
+        <img src="{{url_for('static', filename='imgs/small.png')}}" class="d-block d-sm-none" alt="Logo Mobile">
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarMain">
+        <ul class="navbar-nav me-auto">
+          {% for topic in topics %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('blogs.get_tags', tag=topic.name) }}">{{ topic.name|capitalize }}</a>
+          </li>
+          {% endfor %}
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">All Posts</a>
+            <ul class="dropdown-menu">
+              {% for blog in blogs %}
+              <li><a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', title=blog.title)}}">{{ blog.title
+                  }}</a></li>
+              {% endfor %}
             </ul>
-      <ul class="navbar-nav justify-content-right">
-      <li class="nav-item">
-      <a class="nav-link" onclick="openSubscribe()">Subscribe</a>
-    </li>
-    </ul>
-            <div class="form-popup" id="myForm">
-                <form action= "{{ url_for('login.subscribe')}}" method="post" class="form-container">
-                  <button type="button" class="btn-close btn-close-white" aria-label="Close" onclick="closeSubscribe()"></button>
-    <h2>Subscribe</h2>
+          </li>
+        </ul>
 
-                    <label for="name"><b>Name</b></label>
-                    <input type="text" placeholder="Enter Name" name="name" required>
-
-                    <label for="email"><b>Email</b></label>
-                    <input type="text" placeholder="Enter Email" name="email" required>
-
-                    <button type="submit" class="btn bg-primary btn-sm">Subscribe</button>
-                </form>
-            </div>
-        <script>
-function openSubscribe() {
-  document.getElementById("myForm").style.display = "block";
-}
-
-function closeSubscribe() {
-  document.getElementById("myForm").style.display = "none";
-}
-</script>
-        </div>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="modal" data-bs-target="#subscribeModal" href="#">Subscribe</a>
+          </li>
+        </ul>
+      </div>
     </div>
-</nav>
-<br>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-<body>
-{% block content %}{% endblock %}
-  <footer class="py-5 bg-light">
-    <div class="container">
-      <p class="m-0 text-center text-black-50">Copyright &copy; SirHoppington 2025</p>
-        {% block foot %}{% endblock %}
+  </nav>
+
+  <!-- Flash Messages -->
+  <div class="container content-container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-info mt-3">
+      {% for message in messages %}
+      <div>{{ message }}</div>
+      {% endfor %}
     </div>
-    <!-- /.container -->
+    {% endif %}
+    {% endwith %}
+  </div>
+
+  <body>
+  <!-- Main Content -->
+  {% block content %}{% endblock %}
+  <!-- Footer -->
+  <footer class="py-4 bg-light mt-5 border-top">
+    <p class="text-center text-muted mb-0">&copy; SirHoppington 2025</p>
+    {% block foot %}{% endblock %}
   </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</body>
-</html>
 
+  <!-- Subscribe Modal (Bootstrap 5) -->
+  <div class="modal fade" id="subscribeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 shadow-lg">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Subscribe</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div id="subscribeMessage" class="alert d-none"></div>
+
+          <form id="subscribeForm">
+            <div class="mb-3">
+              <label class="form-label"><strong>Name</strong></label>
+              <input type="text" name="name" class="form-control" placeholder="Enter your name" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label"><strong>Email</strong></label>
+              <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+            </div>
+
+            <!-- Honeypot -->
+            <input type="text" name="website" class="d-none">
+
+            <button type="submit" class="btn btn-primary w-100">Subscribe</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.getElementById("subscribeForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const messageBox = document.getElementById("subscribeMessage");
+      const formData = new FormData(form);
+
+      const response = await fetch("/subscribe", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+
+      messageBox.classList.remove("d-none", "alert-success", "alert-danger");
+      messageBox.classList.add("alert", data.status === "success" ? "alert-success" : "alert-danger");
+      messageBox.textContent = data.message;
+
+      if (data.status === "success") {
+        setTimeout(() => {
+          const modal = bootstrap.Modal.getInstance(document.getElementById("subscribeModal"));
+          modal.hide();
+          form.reset();
+          messageBox.classList.add("d-none");
+        }, 2000);
+      }
+    });
+  </script>
+</body>
+
+</html>
