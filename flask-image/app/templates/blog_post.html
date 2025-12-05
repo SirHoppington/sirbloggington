@@ -1,20 +1,73 @@
 {% extends 'base.html' %}
+
 {% block head %}
 <meta name="description" content="{{ blog.summary }}">
 <meta property="og:title" content="{{ blog.title }}" />
 <meta property="og:description" content="{{ blog.summary }}" />
 <meta property="og:image" content="{{ url_for('static', filename='imgs/' + blog.feature_image) }}" />
 <meta property="og:type" content="article" />
+
 <style>
-li { list-style-type: none; }
+  /* Modern article typography */
+  .blog-article {
+    max-width: 850px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    line-height: 1.75;
+  }
+
+  /* Hero section */
+  .blog-hero-img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 1rem;
+  }
+
+  /* Smooth hover links */
+  .blog-article a {
+    transition: color 0.25s ease, background 0.25s ease;
+  }
+
+  .blog-article a:hover {
+    color: var(--primary);
+  }
+
+  /* Related posts */
+  .related-list li {
+    padding: 6px 0;
+  }
+
+  .related-list a {
+    font-weight: 500;
+    font-size: 1.05rem;
+  }
+
+  .related-list a:hover {
+    text-decoration: underline;
+  }
+
+  /* Improve image inside article content */
+  .blog-content img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin: 1rem 0;
+  }
+
+  /* Smooth card hover */
+  .card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+  }
 </style>
+
 <script>
-  /**
-  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-  var disqus_config = function () {
-  };
-  (function () { // DON'T EDIT BELOW THIS LINE
+  var disqus_config = function () { };
+  (function () {
     var d = document, s = d.createElement('script');
     s.src = 'https://hopnets.disqus.com/embed.js';
     s.setAttribute('data-timestamp', +new Date());
@@ -22,51 +75,73 @@ li { list-style-type: none; }
   })();
 </script>
 {% endblock head %}
+
 {% block content %}
-<div class="container mt-5 pt-4">
-<div class="card mb-4 shadow-sm">
-<img class="img-fluid rounded-top" src="{{url_for('static', filename='imgs/' + blog.feature_image) }}" alt="Featured image for {{ blog.title }}">
-<div class="card-body blog-content">
-<h1 class="mb-3">{{ blog.title }}</h1>
-<div class="d-flex align-items-center mb-3">
-<img src="{{url_for('static', filename='imgs/' + blog.author.profile_pic) }}" class="rounded-circle me-3" style="width:50px; border:2px solid var(--primary);">
-<div>
-<strong><a href="{{ url_for('user_route.get_profile', id=blog.author.id) }}">{{ blog.author.firstname }} {{ blog.author.lastname }}</a></strong><br>
-<small>{{ blog.created_at.strftime('%d-%m-%Y') }} — {{ reading_time }}</small>
+
+<div class="container pt-5 pb-5">
+  <div class="blog-article">
+
+    <!-- HERO IMAGE -->
+    <img class="blog-hero-img mb-4" src="{{ url_for('static', filename='imgs/' + blog.feature_image) }}"
+      alt="Featured image">
+
+    <!-- TITLE -->
+    <h1 class="fw-bold mb-3">{{ blog.title }}</h1>
+
+    <!-- AUTHOR SECTION -->
+    <div class="d-flex align-items-center mb-4">
+      <img src="{{ url_for('static', filename='imgs/' + blog.author.profile_pic) }}" class="rounded-circle me-3"
+        style="width:58px; height:58px; object-fit:cover; border:2px solid var(--primary);">
+
+      <div>
+        <strong>
+          <a href="{{ url_for('user_route.get_profile', id=blog.author.id) }}">
+            {{ blog.author.firstname }} {{ blog.author.lastname }}
+          </a>
+        </strong><br>
+        <small class="text-muted">
+          {{ blog.created_at.strftime('%d-%m-%Y') }} • {{ reading_time }}
+        </small>
+      </div>
+    </div>
+
+    <!-- TAGS -->
+    <p>
+      {% for tag in second_half_tags %}
+      <a href="{{ url_for('blogs.get_tags', tag=tag.name) }}" class="badge bg-primary">{{ tag.name }}</a>
+      {% endfor %}
+    <p>
+
+      <!-- ARTICLE BODY -->
+    <div class="blog-content mb-5">
+      {{ html|safe }}
+    </div>
+
+    <hr class="my-5">
+
+    <!-- RELATED ARTICLES -->
+    <div class="card shadow-sm card-hover mb-5">
+      <h5 class="card-header bg-white fw-semibold">Related articles</h5>
+      <div class="card-body">
+        <ul class="related-list">
+          {% for tag in query_blogs %}
+          {% if blog.title != tag.title %}
+          <li>
+            <a href="{{ url_for('blogs.get_single_blog', title=tag.title) }}">
+              {{ tag.title }}
+            </a><br>
+            <small class="text-muted">{{ tag.created_at.strftime('%d/%m/%Y') }}</small>
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <!-- COMMENTS -->
+    <div id="disqus_thread" class="mt-5"></div>
+
+  </div>
 </div>
-</div>
 
-
-<p>
-{% for tag in second_half_tags %}
-<a href="{{ url_for('blogs.get_tags', tag=tag.name) }}" class="badge bg-primary">{{ tag.name }}</a>
-{% endfor %}
-</p>
-
-
-{{ html|safe }}
-<hr>
-</div>
-</div>
-
-
-<div class="card shadow-sm mb-5">
-<h5 class="card-header">Related articles</h5>
-<div class="card-body">
-<ul>
-{% for tag in query_blogs %}
-{% if blog.title != tag.title %}
-<li>
-<a href="{{ url_for('blogs.get_single_blog', title=tag.title) }}">{{ tag.title }}</a>
-<small class="text-muted">{{ tag.created_at.strftime('%d/%m/%Y') }}</small>
-</li>
-{% endif %}
-{% endfor %}
-</ul>
-</div>
-</div>
-
-
-<div id="disqus_thread"></div>
-</div>
 {% endblock content %}

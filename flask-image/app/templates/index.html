@@ -24,31 +24,29 @@
             </p>
         </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="card-grid mt-4">
         {% for blog in homepage %}
-        <div class="col">
-            <div class="card my-4 box-shadow h-100">
-                <img class="card-img-top" alt="Thumbnail [200x250}"
-                    src="{{url_for('static', filename='imgs/'+blog.thumbnail) }}">
+        <div class="card box-shadow h-100">
+            <img class="card-img-top" alt="Thumbnail [200x250}"
+                src="{{url_for('static', filename='imgs/'+blog.thumbnail) }}">
 
-                <div class="card-body d-flex flex-column">
-                    <strong class="d-inline-block mb-2 lg text-primary">
-                        <a href={{ url_for('blogs.get_single_blog', title=blog.title) }}> {{ blog.title }}</a>
-                    </strong>
-                    <p class="text-secondary">{{ blog.summary }}</p>
-                </div>
-                <div class="card-footer text-muted">
-                    <small>Published: {{ blog.created_at.strftime('%d-%m-%Y') }} {{ estimate_reading_time(blog.content)
-                        }} </small>
-                    <p>
-                        {% for tag in tags %}
-                        {% if tag[1].id == blog.id %}
-                        <a href={{ url_for('blogs.get_tags', tag=tag[0].name) }} class="badge bg-primary"> {{
-                            tag[0].name }}</a>
-                        {% endif %}
-                        {% endfor %}
-                    </p>
-                </div>
+            <div class="card-body d-flex flex-column">
+                <a class="text-primary fw-bold mb-2" href="{{ url_for('blogs.get_single_blog', title=blog.title) }}">
+                    {{ blog.title }}
+                </a>
+                <p class="text-secondary flex-grow-1">{{ blog.summary }}</p>
+            </div>
+            <div class="card-footer text-muted">
+                <small>Published: {{ blog.created_at.strftime('%d-%m-%Y') }} {{ estimate_reading_time(blog.content)
+                    }} </small>
+                <p>
+                    {% for tag in tags %}
+                    {% if tag[1].id == blog.id %}
+                    <a href={{ url_for('blogs.get_tags', tag=tag[0].name) }} class="badge bg-primary"> {{
+                        tag[0].name }}</a>
+                    {% endif %}
+                    {% endfor %}
+                </p>
             </div>
         </div>
         {% endfor %}
