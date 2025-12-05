@@ -29,6 +29,23 @@
 
   <script>hljs.highlightAll();</script>
   <style>
+    :root {
+      --link-hover: #18bc9c;
+      /* same light green as navbar highlight */
+    }
+
+    a {
+      color: var(--bs-primary);
+      /* default Bootstrap link color */
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    a:hover {
+      color: var(--link-hover) !important;
+      text-decoration: underline;
+    }
+
     body {
       padding-top: 80px;
       background-color: #f8f9fa;
@@ -123,10 +140,11 @@
       color: #0056d2;
       /* brighter blue on hover */
     }
+
     .author-card:hover {
-    transform: none !important;
-    box-shadow: none !important;
-}
+      transform: none !important;
+      box-shadow: none !important;
+    }
   </style>
   {% block head %}{% endblock %}
 </head>
