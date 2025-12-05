@@ -110,6 +110,23 @@
       width: 100%;
       object-fit: cover;
     }
+
+    .card a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease, text-decoration 0.2s ease;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+      color: #0056d2;
+      /* brighter blue on hover */
+    }
+    .author-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
   </style>
   {% block head %}{% endblock %}
 </head>
