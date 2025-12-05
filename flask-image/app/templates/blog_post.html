@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% block head %}
 <meta name="description" content="{{ blog.summary }}">
+<meta property="og:title" content="{{ blog.title }}" />
+<meta property="og:description" content="{{ blog.summary }}" />
+<meta property="og:image" content="{{ url_for('static', filename='imgs/' + blog.feature_image) }}" />
+<meta property="og:type" content="article" />
 <style>
-  li {
-    list-style-type: none;
-  }
+li { list-style-type: none; }
 </style>
 <script>
   /**
@@ -21,61 +23,50 @@
 </script>
 {% endblock head %}
 {% block content %}
-<br>
-<br>
-<div class="container">
-  <div class="row mb-2">
-    <div class="col">
-      <div class="card my-4 box-shadow h-md-250">
-        <div class="card-body"><br>
-          <h1> {{ blog.title }} </h1>
-          <div class="row mb-2">
-            <div class="col-sm-1">
-          <img class="card-img-left rounded-circle mr-4" style="width: 50px; border: 2px solid #18BC9C;"
-            src="{{url_for('static', filename='imgs/'+blog.author.profile_pic) }}" alt="">
-          </div>
-          <div class="col-sm-4">
-            <p><a href={{ url_for('user_route.get_profile', id=blog.author.id) }}>{{blog.author.firstname[0]|upper }}{{
-              blog.author.firstname[1:] }} {{blog.author.lastname[0]|upper }}{{
-              blog.author.lastname[1:] }}</a>
-            <br>
-            {{blog.created_at.strftime('%d-%m-%Y') }}
-            {{ reading_time }}
-          </p>
-        </div>
-      </div>
-      </div>
-        <img class="img-fluid" src="{{url_for('static', filename='imgs/'+blog.feature_image) }}" alt="Feature image for {{blog.summary}}">
-        <p>
-          Tags: {% for tag in second_half_tags %}
-          <a href={{ url_for('blogs.get_tags', tag=tag.name) }} class="badge bg-primary">{{ tag.name }}</a>
-          {% endfor %}
-        </p>
-        <div class="card-body">
-          {{ html|safe }}
-          <hr>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div>
-    <div class="row">
-      <div class="col">
-        <div class="card my-4 box-shadow h-md-250">
-          <h5 class="card-header">Related articles</h5>
-          <div class="card-body">
-            {% for tag in query_blogs %}
-            {% if not blog.title == tag.title %}
-            <li>
-              <a href={{ url_for('blogs.get_single_blog', title=tag.title) }}> {{ tag.title }} </a> {{
-              tag.created_at.strftime('%d/%m/%Y') }}
-            </li>
-            {% endif %}
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="disqus_thread"></div>
-  </div>
-  {% endblock content %}
+<div class="container mt-5 pt-4">
+<div class="card mb-4 shadow-sm">
+<img class="img-fluid rounded-top" src="{{url_for('static', filename='imgs/' + blog.feature_image) }}" alt="Featured image for {{ blog.title }}">
+<div class="card-body blog-content">
+<h1 class="mb-3">{{ blog.title }}</h1>
+<div class="d-flex align-items-center mb-3">
+<img src="{{url_for('static', filename='imgs/' + blog.author.profile_pic) }}" class="rounded-circle me-3" style="width:50px; border:2px solid var(--primary);">
+<div>
+<strong><a href="{{ url_for('user_route.get_profile', id=blog.author.id) }}">{{ blog.author.firstname }} {{ blog.author.lastname }}</a></strong><br>
+<small>{{ blog.created_at.strftime('%d-%m-%Y') }} — {{ reading_time }}</small>
+</div>
+</div>
+
+
+<p>
+{% for tag in second_half_tags %}
+<a href="{{ url_for('blogs.get_tags', tag=tag.name) }}" class="badge bg-primary">{{ tag.name }}</a>
+{% endfor %}
+</p>
+
+
+{{ html|safe }}
+<hr>
+</div>
+</div>
+
+
+<div class="card shadow-sm mb-5">
+<h5 class="card-header">Related articles</h5>
+<div class="card-body">
+<ul>
+{% for tag in query_blogs %}
+{% if blog.title != tag.title %}
+<li>
+<a href="{{ url_for('blogs.get_single_blog', title=tag.title) }}">{{ tag.title }}</a>
+<small class="text-muted">{{ tag.created_at.strftime('%d/%m/%Y') }}</small>
+</li>
+{% endif %}
+{% endfor %}
+</ul>
+</div>
+</div>
+
+
+<div id="disqus_thread"></div>
+</div>
+{% endblock content %}
