@@ -127,7 +127,7 @@
           {% for tag in query_blogs %}
           {% if blog.title != tag.title %}
           <li>
-            <a href="{{ url_for('blogs.get_single_blog', title=tag.title) }}">
+            <a href="{{ url_for('blogs.get_single_blog', slug=tag.slug) }}">
               {{ tag.title }}
             </a><br>
             <small class="text-muted">{{ tag.created_at.strftime('%d/%m/%Y') }}</small>

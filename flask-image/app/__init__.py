@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_sitemapper import Sitemapper
+from slugify import slugify
 
 db = SQLAlchemy()
 migrate = Migrate()

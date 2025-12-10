@@ -110,14 +110,14 @@ def get_all_blogs():
                                tags=tags, homepage=latest[1:4], featured=latest[0], topics=all_tags[0:20])
 
 @sitemapper.include(url_variables=generate_articles)
-@blogs.route('/blog/<title>', methods=["GET"])
-def get_single_blog(title):
+@blogs.route('/blog/<slug>', methods=["GET"])
+def get_single_blog(slug):
 
     blogs = blogs_query()
 
     latest = sorted(blogs, reverse=True, key=lambda b: b.created_at)
-    blog = Blog.query.options(joinedload(Blog.author)).filter_by(title=title).first()
-    id = db.session.query(Blog).filter(Blog.title == title).first()
+    blog = Blog.query.options(joinedload(Blog.author)).filter_by(slug=slug).first_or_404()
+    id = db.session.query(Blog).filter(Blog.slug == slug).first()
     print(f"blog author is {blog.author}")
     all_tags = Tag.query.all()
     html = my_renderer(blog.content)
@@ -131,7 +131,7 @@ def get_single_blog(title):
     reading_time = estimate_reading_time(blog.content)
     return render_template('blog_post.html', blog=blog, blogs=latest[:10], html=html,
                            query_tags=query_tags, query_blogs=query_blogs, first_half_tags=query_tags[:middle_index],
-                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], title=title,reading_time=reading_time, environment=os.getenv("ENVIRONMENT", "development"))
+                           second_half_tags=query_tags[middle_index:], topics=all_tags[0:20], slug=slug,reading_time=reading_time, environment=os.getenv("ENVIRONMENT", "development"))
 
 @sitemapper.include(url_variables=generate_tags)
 @blogs.route('/<tag>', methods=["GET"])

@@ -172,7 +172,7 @@
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">All Posts</a>
           <ul class="dropdown-menu">
             {% for blog in blogs %}
-            <li><a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', title=blog.title)}}">{{ blog.title
+            <li><a class="dropdown-item" href="{{ url_for('blogs.get_single_blog', slug=blog.slug)}}">{{ blog.title
                 }}</a></li>
             {% endfor %}
           </ul>

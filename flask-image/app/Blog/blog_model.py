@@ -1,10 +1,13 @@
 from app import db
 from datetime import datetime
 from app.Tags_Blog.tag_blog_table import tag_blog
+from slugify import slugify
+
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50), nullable=False)
+    slug = db.Column(db.String(255), unique=True, nullable=True)
     content = db.Column(db.Text, nullable=False)
     summary = db.Column(db.Text, nullable=False)
     feature_image = db.Column(db.String)
@@ -19,6 +22,7 @@ class Blog(db.Model):
 
     def __init__(self, title, content, summary, feature_image, thumbnail):
         self.title = title,
+        self.slug = slugify(title),
         self.content = content,
         self.summary = summary,
         self.feature_image = feature_image,

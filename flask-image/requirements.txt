@@ -45,3 +45,4 @@ python-dotenv>=1.0.1
 pillow>=10.4.0
 gunicorn>=21.2.0
 flask-sitemapper>=1.8.1
+python-slugify>=8.0.4
