@@ -53,7 +53,7 @@
                     src="{{url_for('static', filename='imgs/'+blog.thumbnail) }}">
                 <div class="card-body d-flex flex-column">
                     <div class="card-title">
-                        <a href={{ url_for('blogs.get_single_blog', slug=blog.slug) }}> {{ blog.title }}</a>
+                        <a href="{{ url_for('blogs.get_single_blog', slug=blog.slug) }}"> {{ blog.title }}</a>
                     </div>
                     <p class="card-text">{{ blog.summary }}</p>
                 </div>
@@ -63,7 +63,8 @@
                     <p>
                         {% for tag in tags %}
                         {% if tag[1].id == blog.id %}
-                        <a href={{ url_for('blogs.get_tags', tag=tag[0].name) }}>{{ tag[0].name }}</a>
+                        <a href="{{ url_for('blogs.get_tags', tag=tag[0].name) }}" class="badge bg-primary">{{
+                            tag[0].name }}</a>
                         {% endif %}
                         {% endfor %}
                     </p>
